@@ -1,0 +1,1208 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>教務パートナー v18 - 授業デザイン4.0</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--grad:linear-gradient(100deg,#6a7bf7 0%,#a06be8 55%,#f06fa8 100%);--pri:#7c6cf0;--ink:#37335c}
+html{color-scheme:light}
+html.bigfont{font-size:17.5px}
+html.dark{color-scheme:dark}
+.hidden{display:none !important}
+body{font-family:'Zen Maru Gothic','Hiragino Sans','Meiryo',sans-serif;background:linear-gradient(155deg,#f7f6ff 0%,#fdf4f8 55%,#f0f7ff 100%) fixed;color:var(--ink)}
+.card{background:#fff;border:1px solid #ece7ff;border-radius:1.2rem;box-shadow:0 10px 28px rgba(124,108,240,.10);padding:1rem;margin-bottom:1rem}
+.btn{display:inline-block;padding:.42rem .85rem;border-radius:.8rem;font-size:.82rem;border:1px solid #e3ddfb;background:#fff;color:var(--ink);cursor:pointer;margin:.1rem;transition:all .15s}
+.btn:hover{background:#f3f0ff;transform:translateY(-1px)}
+.btn-p{background:var(--grad);border:none;color:#fff;box-shadow:0 4px 14px rgba(240,111,168,.35);font-weight:700}
+.btn-p:hover{filter:brightness(1.07)}
+.btn-d{border-color:#ffd0dc;color:#e0507a}
+.btn-d:hover{background:#fff0f4}
+.inp{border:1px solid #e0daf9;border-radius:.8rem;padding:.38rem .6rem;font-size:.85rem;width:100%;background:#fff;color:var(--ink)}
+.inp:focus{outline:2px solid #cfc4ff}
+.lbl{font-size:.72rem;color:#8a86b0;display:block;margin-bottom:.15rem}
+.nav-btn{display:flex;width:100%;text-align:left;padding:.45rem .6rem;border-radius:.8rem;font-size:.82rem;cursor:pointer;align-items:center;gap:.3rem}
+.nav-btn:hover{background:#f1edff}
+.nav-btn.active{background:var(--grad);color:#fff;box-shadow:0 4px 12px rgba(124,108,240,.35);font-weight:700}
+table.tbl{border-collapse:collapse;width:100%;font-size:.8rem}
+table.tbl td,table.tbl th{border:1px solid #e3ddfb;padding:.3rem .4rem;text-align:center}
+table.tbl th{background:#f3f0ff}
+.chip{display:inline-block;padding:.1rem .55rem;border-radius:9999px;font-size:.7rem;background:#f1edff;color:#6d5ce8;margin:.1rem}
+.chip-warn{background:#ffe0e9;color:#e0507a}
+.dz{border:2px dashed #b9aef5;border-radius:1rem;padding:.8rem;text-align:center;font-size:.75rem;color:#8a86b0;cursor:pointer}
+.dz.ring{border-color:#f06fa8;background:#fdf2f8}
+.bar{height:8px;border-radius:4px;background:var(--grad)}
+.bar-alt{background:linear-gradient(90deg,#4cc3f7,#6a7bf7)}
+.seat-cell{cursor:pointer}.seat-cell:hover{background:#f3f0ff}
+.seat-sel{outline:2px solid #f06fa8;background:#fdf2f8}
+h2{letter-spacing:.02em}
+/* ===== ダークモード ===== */
+html.dark body{background:linear-gradient(160deg,#141126,#1a1530) fixed;color:#e6e2f7}
+html.dark .card{background:#1e1a33;border-color:#2c2650;box-shadow:0 10px 28px rgba(0,0,0,.35)}
+html.dark #dWelcome{background:#262143 !important}
+html.dark .btn{background:#262143;border-color:#3a3468;color:#e6e2f7}
+html.dark .btn:hover{background:#2e2852}
+html.dark .btn-p{background:var(--grad);border:none;color:#fff}
+html.dark .btn-d{color:#ff9db4;border-color:#7a3b4c}
+html.dark .btn-d:hover{background:#33202a}
+html.dark .inp{background:#262143;border-color:#3a3468;color:#e6e2f7}
+html.dark .lbl{color:#9a94c0}
+html.dark .nav-btn:hover{background:#262143}
+html.dark table.tbl td,html.dark table.tbl th{border-color:#3a3468}
+html.dark table.tbl th{background:#262143}
+html.dark .chip{background:#2e2852;color:#b9aef5}
+html.dark .chip-warn{background:#43202e;color:#ff9db4}
+html.dark .dz{color:#9a94c0;border-color:#3a3468}
+html.dark .text-slate-500,html.dark .text-slate-400{color:#9a94c0 !important}
+html.dark .text-purple-600{color:#b9aef5 !important}
+html.dark .text-fuchsia-700{color:#f0a6d0 !important}
+html.dark .border-fuchsia-400{border-color:#f06fa8 !important}
+html.dark .bg-white{background:#1e1a33 !important}
+html.dark .bg-white\/90{background:rgba(30,26,51,.92) !important}
+html.dark .border-purple-100{border-color:#2c2650 !important}
+html.dark .hover\:bg-purple-50:hover{background:#262143 !important}
+html.dark .bg-black\/40{background:rgba(0,0,0,.6) !important}
+html.dark .seat-cell:hover{background:#262143}
+html.dark .seat-sel{background:#33202a}
+</style>
+</head>
+<body class="text-sm">
+
+<div id="lockOverlay" class="hidden fixed inset-0 z-[60] text-white flex items-center justify-center bg-gradient-to-br from-indigo-950 via-purple-950 to-slate-950">
+ <div class="text-center w-72">
+  <div class="text-3xl mb-2">🔒</div>
+  <h1 class="font-bold mb-1">教務パートナーはロック中</h1>
+  <p class="text-xs text-purple-200 mb-4">覗き見防止のため画面を隠しています</p>
+  <input id="lockPin" type="password" inputmode="numeric" class="inp text-center" placeholder="ロック解除PIN" maxlength="12">
+  <p id="lockMsg" class="text-xs text-red-300 h-4"></p>
+  <button id="lockUnlock" class="btn btn-p w-full mt-1">ロック解除</button>
+ </div>
+</div>
+
+<header class="text-white px-3 py-2 flex items-center gap-2 sticky top-0 z-40 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 shadow-lg">
+  <button id="menuBtn" class="btn !bg-white/20 !border-white/40 !text-white">☰</button>
+  <div class="font-bold">教務パートナー <span class="text-purple-100 text-xs font-normal">教員業務をつなぐ校務支援アプリ v18</span></div>
+  <button id="darkBtn" class="btn !bg-white/20 !border-white/40 !text-white" title="ダークモード切替">🌙</button>
+  <button id="fontBtn" class="btn !bg-white/20 !border-white/40 !text-white" title="文字サイズ切替">Aa</button>
+  <div class="relative hidden sm:block ml-2">
+    <input id="gSearch" class="inp !w-40" placeholder="🔍 生徒検索" maxlength="20">
+    <div id="gSearchRes" class="hidden absolute left-0 top-9 w-56 bg-white rounded-xl shadow-xl border border-purple-100 z-50 overflow-hidden"></div>
+  </div>
+  <div class="ml-auto flex items-center gap-1 text-xs">
+    <span>表示クラス：</span>
+    <select id="fGrade" class="inp !w-auto"></select><select id="fClass" class="inp !w-auto"></select>
+    <button id="fClear" class="btn !bg-white/20 !border-white/40 !text-white">解除</button>
+  </div>
+</header>
+
+<div class="flex">
+<aside id="sidebar" class="w-56 p-2 hidden md:block shrink-0 sticky top-12 self-start max-h-[calc(100vh-3rem)] overflow-y-auto">
+  <button class="btn btn-p w-full mb-2" data-nav="demo">10分で使ってみる</button>
+  <nav id="sideNav"></nav>
+  <p class="text-[10px] text-slate-500 mt-4 px-2">すべてのデータはこのブラウザに保存されます。個人情報の取り扱いにご注意ください。<br>外部生成AIサービスへ児童生徒データを送信する機能はありません。外部CDNは読み込みます。<br>ショートカット：Ctrl+Shift+L ロック／Esc モーダル閉じる／🌙 ダーク／Aa 文字サイズ。</p>
+</aside>
+
+<main class="flex-1 p-3 pb-20">
+
+<section id="sec-demo" class="section hidden">
+ <h2 class="text-lg font-bold mb-2">10分で使ってみる</h2>
+ <div class="card text-xs">架空の中学校1年1組を使って、観察記録 → 成長のストーリー → 学級の成長 → 授業デザイン4.0を体験します。<br>実データが入っている場合、デモ開始では上書きしません。必要なら先にバックアップしてください。</div>
+ <div class="grid md:grid-cols-2 gap-2">
+  <div class="card"><h3 class="font-bold">① 一人の成長を見る</h3><p class="text-xs">青木 葵さんの観察記録を確認します。</p><button id="demoLoad" class="btn btn-p">デモデータを読み込む</button><button class="btn" data-nav="portfolio">ポートフォリオへ</button></div>
+  <div class="card"><h3 class="font-bold">② 学級を見る</h3><p class="text-xs">学習文化・協働・主体性・安心の変化を見ます。</p><button class="btn btn-p" data-nav="growth">学級の成長を見る</button></div>
+  <div class="card"><h3 class="font-bold">③ 次の授業を考える</h3><p class="text-xs">既存記録から次の学びの候補を確認します。</p><button class="btn btn-p" data-nav="design">授業デザインを見る</button></div>
+  <div class="card"><h3 class="font-bold">④ デモを終了</h3><p class="text-xs">デモ専用データを削除して元の状態に戻します。</p><button id="demoRemove" class="btn btn-d">デモデータを削除</button></div>
+ </div>
+ <div class="card text-xs"><b>先生への約束</b>：この画面の候補は、先生の判断を置き換えるものではありません。元記録を確認し、実際の生徒の姿を踏まえて、次の授業を先生自身が決めます。</div>
+</section>
+
+<section id="sec-dashboard" class="section">
+  <h2 class="text-lg font-bold">ダッシュボード <span class="text-xs font-normal text-slate-500">今日の教務コマンドセンター</span></h2>
+  <div class="flex items-center gap-2 mb-2 flex-wrap">
+    <span id="dDate" class="chip !text-xs"></span>
+    <button id="dashLock" class="btn">🔒 画面ロック</button>
+    <button class="btn" data-nav="settings">⚙️ 安全設定</button>
+  </div>
+  <div id="dWelcome" class="card hidden" style="background:linear-gradient(120deg,#eef0ff,#ffeef6)">
+    <h3 class="font-bold">👋 ようこそ！はじめの3ステップ</h3>
+    <p class="text-xs mb-2">①生徒を登録 → ②PINとバックアップを設定 → ③デモで体験。データはすべてこの端末内に保存されます。</p>
+    <button class="btn btn-p" data-nav="students">① 生徒を登録</button>
+    <button class="btn btn-p" data-nav="settings">② 安全設定</button>
+    <button class="btn btn-p" data-nav="demo">③ デモ体験</button>
+    <button id="dWelcomeClose" class="btn">閉じる</button>
+  </div>
+  <div class="grid md:grid-cols-4 gap-2">
+    <div class="card !mb-0"><h3 class="font-bold text-xs">朝・登校時</h3><button class="btn" data-nav="attendance">出席を確認・入力</button><button class="btn" data-nav="health">健康・心の天気</button><button class="btn" data-nav="timetable">今日の時間割・準備</button></div>
+    <div class="card !mb-0"><h3 class="font-bold text-xs">授業・休み時間</h3><button class="btn" data-nav="observe">気づきを観察記録</button><button class="btn" data-nav="submit">提出物をチェック</button><button class="btn" data-nav="students">児童生徒情報を確認</button></div>
+    <div class="card !mb-0"><h3 class="font-bold text-xs">放課後</h3><button class="btn" data-nav="grades">成績・評価を入力</button><button class="btn" data-nav="journal">クラス日誌・週案</button><button class="btn" data-nav="contact">保護者連絡を記録</button></div>
+    <div class="card !mb-0"><h3 class="font-bold text-xs">退勤前</h3><button class="btn" data-nav="letter">学級通信・おたより</button><button id="dashBak" class="btn">暗号化バックアップ</button><button class="btn" data-nav="analysis">要注目児童を確認</button></div>
+  </div>
+  <div class="grid md:grid-cols-3 gap-2 mt-2">
+    <div class="card !mb-0"><h3 class="font-bold text-xs mb-1">今日の確認事項</h3><div id="dChecklist"></div></div>
+    <div class="card !mb-0"><h3 class="font-bold text-xs mb-1">個人情報保護ステータス</h3><div id="dPrivacy"></div></div>
+    <div class="card !mb-0"><h3 class="font-bold text-xs mb-1">未処理・期限</h3><div id="dDue"></div></div>
+  </div>
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mt-2" id="dCards"></div>
+  <div class="grid md:grid-cols-4 gap-2 mt-2">
+    <div class="card !mb-0"><h3 class="font-bold text-xs mb-1">🎲 ランダム指名</h3><div id="pickName" class="text-lg font-bold text-purple-600 text-center py-1">—</div><div class="text-center"><button id="pickBtn" class="btn btn-p">指名する</button></div></div>
+    <div class="card !mb-0"><h3 class="font-bold text-xs mb-1">🕐 今日の授業</h3><div id="dLessons" class="text-xs"></div></div>
+    <div class="card !mb-0"><h3 class="font-bold text-xs mb-1">🎂 今週の誕生日</h3><div id="dBday" class="text-xs"></div></div>
+    <div class="card !mb-0"><h3 class="font-bold text-xs mb-1">🧰 クラス運営ツール</h3><button class="btn" data-nav="duties">🪑 席替え・係</button><button class="btn" data-nav="interview">🗓 面談表</button><button class="btn" data-nav="students">🖨 名簿PDF</button></div>
+  </div>
+  <div class="grid md:grid-cols-2 gap-2 mt-2">
+    <div class="card"><h3 class="font-bold mb-1 text-xs">最近の観察記録</h3><div id="dRecent"></div></div>
+    <div class="card"><h3 class="font-bold mb-1 text-xs">今日の提出物チェック</h3><div id="dToday"></div></div>
+  </div>
+</section>
+
+<section id="sec-material" class="section hidden">
+  <h2 class="text-lg font-bold mb-2">授業案ジェネレーター</h2>
+  <div class="grid md:grid-cols-2 gap-2">
+    <div class="card"><h3 class="font-bold mb-1">教材設定</h3>
+      <label class="lbl">学校種</label><select id="mSchool" class="inp"><option>小学校</option><option>中学校</option><option>高校</option></select>
+      <label class="lbl">学年</label><select id="mGrade" class="inp"></select>
+      <label class="lbl">教科</label><select id="mSubject" class="inp"><option>国語</option><option>算数</option><option>数学</option><option>英語</option><option>理科</option><option>社会</option><option>音楽</option><option>体育</option><option>美術</option><option>生活</option><option>家庭</option><option>プログラミング</option></select>
+      <label class="lbl">単元・テーマ</label><input id="mUnit" class="inp" placeholder="例：分数のたし算" maxlength="40">
+      <label class="lbl">授業時間（分）</label><input id="mTime" type="number" class="inp" value="45" min="20" max="120">
+      <button id="mGenBtn" class="btn btn-p mt-2">授業案を作成</button>
+    </div>
+    <div class="card"><h3 class="font-bold mb-1">プレビュー</h3>
+      <div id="mPreview" class="text-xs border rounded p-2 min-h-[200px] overflow-auto max-h-[400px]">左側のフォームを入力して「授業案を作成」を押してください。</div>
+      <div class="mt-2"><button id="mSaveBtn" class="btn">保存</button><button id="mPdfBtn" class="btn">PDF</button></div>
+    </div>
+  </div>
+  <div class="card"><h3 class="font-bold mb-1">保存済み教材</h3><div id="mSavedList"></div></div>
+</section>
+
+<section id="sec-observe" class="section hidden">
+  <h2 class="text-lg font-bold mb-2">観察記録カメラ＋評価文案アシスタント</h2>
+  <div class="grid md:grid-cols-2 gap-2">
+    <div class="card"><h3 class="font-bold mb-1">新規記録</h3>
+      <label class="lbl">児童生徒</label><select id="oStudent" class="inp"></select>
+      <label class="lbl">記録の種類</label><select id="oType" class="inp"><option>授業の様子</option><option>生活・行動</option><option>特別活動</option><option>提出物・作品</option><option>その他</option></select>
+      <label class="lbl">成長軸タグ（任意）</label>
+      <select id="oAxis" class="inp"><option value="">（なし）</option><option>学習文化</option><option>協働</option><option>主体性</option><option>安心</option></select>
+      <label class="lbl">日付</label><input id="oDate" type="date" class="inp">
+      <div class="flex gap-1 my-2">
+        <button class="btn tab-btn btn-p" data-tab="text">テキスト</button><button class="btn tab-btn" data-tab="voice">音声</button><button class="btn tab-btn" data-tab="cam">カメラ</button><button class="btn tab-btn" data-tab="file">ファイル</button>
+      </div>
+      <div id="tab-text"><textarea id="oText" class="inp" rows="4" placeholder="観察内容を入力（下書き自動保存）" maxlength="2000"></textarea></div>
+      <div id="tab-voice" class="hidden"><button id="oVoiceBtn" class="btn">🎤 タップして音声入力開始</button><p class="text-[10px] text-slate-500">※音声ファイルは「ファイル」タブからも選択可能です。</p></div>
+      <div id="tab-cam" class="hidden"><button id="oCamBtn" class="btn">カメラ起動</button>
+        <div id="camWrap" class="hidden mt-1"><video id="camVideo" autoplay playsinline class="w-64 border rounded"></video>
+        <div><button id="camSnap" class="btn">📷 撮影</button><button id="camStop" class="btn">停止</button></div>
+        <div id="camShotWrap" class="hidden"><img id="camShot" class="w-32 border rounded mt-1"></div></div>
+      </div>
+      <div id="tab-file" class="hidden"><div id="oDrop" class="dz">画像・動画・PDFをドラッグまたはクリック</div><input id="oFile" type="file" accept="image/*,video/*,application/pdf" class="hidden"><div id="oFileName" class="text-xs mt-1"></div></div>
+      <div class="mt-2"><button id="oGenBtn" class="btn btn-p">評価文案を作成</button><button id="oSaveBtn" class="btn">記録を保存</button></div>
+      <label class="lbl mt-2">生成された評価文</label><textarea id="oEval" class="inp" rows="3" maxlength="1000"></textarea>
+      <button id="oCopy" class="btn">コピー</button><button id="oClear" class="btn">クリア</button>
+    </div>
+    <div class="card"><h3 class="font-bold mb-1">記録一覧 <select id="oSort" class="inp !w-auto"><option value="new">新しい順</option><option value="old">古い順</option><option value="name">生徒別</option></select></h3><div id="oList" class="space-y-2 max-h-[500px] overflow-auto"></div></div>
+  </div>
+</section>
+
+<section id="sec-report" class="section hidden">
+  <h2 class="text-lg font-bold mb-2">通知表コメント一括生成</h2>
+  <div class="card">
+    <span class="chip">対象：全員（フィルター適用中）</span>
+    <label class="lbl">学期</label><select id="rTerm" class="inp !w-auto"><option>1学期</option><option>2学期</option><option>3学期</option></select>
+    <label class="lbl inline ml-2"><input id="rYear" type="checkbox">学年評価</label>
+    <div class="mt-2"><button id="rGenBtn" class="btn btn-p">評価文案を一括作成</button><button id="rSaveBtn" class="btn">💾 学期コメントを保存</button><button id="rPdfBtn" class="btn">PDF出力</button></div>
+    <div id="rOut" class="mt-2 space-y-2"></div>
+    <h3 class="font-bold mt-3 mb-1 text-xs">保存済み（学期別）</h3><div id="rSaved"></div>
+  </div>
+</section>
+
+<section id="sec-guidance" class="section hidden">
+  <h2 class="text-lg font-bold mb-2">指導要録自動作成</h2>
+  <div class="grid md:grid-cols-2 gap-2">
+    <div class="card">
+      <label class="lbl">対象児童生徒</label><select id="gStudent" class="inp"></select>
+      <label class="lbl">年度</label><input id="gYear" class="inp" value="2026" maxlength="4">
+      <button id="gGenBtn" class="btn btn-p">指導要録を自動生成</button><button id="gPdfBtn" class="btn">PDF出力</button>
+      <h3 class="font-bold mt-3 mb-1 text-xs">各項目の編集</h3>
+      <label class="lbl">各観点の評価（学習状況）</label><textarea id="gLearn" class="inp" rows="3" maxlength="1000"></textarea>
+      <label class="lbl">行動・出席状況</label><textarea id="gBehavior" class="inp" rows="2" maxlength="1000"></textarea>
+      <label class="lbl">特別活動・係・役割</label><textarea id="gActivities" class="inp" rows="2" maxlength="1000"></textarea>
+      <label class="lbl">総合所見・今後の展望</label><textarea id="gSummary" class="inp" rows="3" maxlength="1000"></textarea>
+      <button id="gSaveBtn" class="btn btn-p mt-1">保存</button>
+      <h3 class="font-bold mt-3 mb-1 text-xs">保存済み指導要録</h3><div id="gSavedList"></div>
+    </div>
+    <div class="card"><h3 class="font-bold mb-1">プレビュー</h3><div id="gPreview" class="text-xs border rounded p-2 min-h-[200px]">児童生徒を選択して「指導要録を自動生成」を押してください。</div></div>
+  </div>
+</section>
+
+<section id="sec-grades" class="section hidden">
+  <h2 class="text-lg font-bold mb-2">成績管理＋成績分布グラフ</h2>
+  <div class="grid md:grid-cols-2 gap-2">
+    <div class="card"><h3 class="font-bold mb-1">テストを登録</h3>
+      <label class="lbl">テスト名</label><input id="tName" class="inp" maxlength="40">
+      <label class="lbl">教科</label><select id="tSubject" class="inp"><option>国語</option><option>算数</option><option>数学</option><option>英語</option><option>理科</option><option>社会</option><option>その他</option></select>
+      <label class="lbl">満点</label><input id="tMax" type="number" class="inp" value="100" min="1" max="1000">
+      <label class="lbl">実施日</label><input id="tDate" type="date" class="inp">
+      <button id="tRegBtn" class="btn btn-p">テストを登録</button>
+      <h3 class="font-bold mt-2 mb-1 text-xs">登録済みテスト</h3><div id="tList"></div>
+    </div>
+    <div class="card"><h3 class="font-bold mb-1">点数入力 <button id="tCsv" class="btn">CSV出力</button></h3>
+      <select id="tSelect" class="inp"><option value="">テストを選択</option></select>
+      <div id="scoreWrap" class="mt-2 space-y-1 max-h-[300px] overflow-auto">テストを選択すると、児童生徒ごとの点数入力欄が表示されます。</div>
+    </div>
+  </div>
+  <div class="grid md:grid-cols-3 gap-2">
+    <div class="card"><h3 class="font-bold text-xs mb-1">成績分布（度数分布）</h3><div id="histChart"></div></div>
+    <div class="card"><h3 class="font-bold text-xs mb-1">児童生徒別スコア</h3><div id="scoreChart"></div></div>
+    <div class="card"><h3 class="font-bold text-xs mb-1">統計サマリー</h3><div id="statSum"></div></div>
+  </div>
+</section>
+
+<section id="sec-iep" class="section hidden">
+  <h2 class="text-lg font-bold mb-2">個別指導計画（IEP）テンプレート</h2>
+  <div class="grid md:grid-cols-2 gap-2">
+    <div class="card"><h3 class="font-bold mb-1">新規IEP作成</h3>
+      <label class="lbl">対象児童生徒</label><select id="iStudent" class="inp"></select>
+      <label class="lbl">対象教科・領域</label><input id="iArea" class="inp" maxlength="40">
+      <label class="lbl">作成日</label><input id="iDate" type="date" class="inp">
+      <label class="lbl">現状の課題・特徴</label><textarea id="iCurrent" class="inp" rows="2" maxlength="1000"></textarea>
+      <label class="lbl">長期目標</label><textarea id="iLong" class="inp" rows="2" maxlength="1000"></textarea>
+      <label class="lbl">短期目標（1〜2か月）</label><textarea id="iShort" class="inp" rows="2" maxlength="1000"></textarea>
+      <label class="lbl">具体的支援・手立て</label><textarea id="iSupport" class="inp" rows="2" maxlength="1000"></textarea>
+      <label class="lbl">評価・見直し期間</label><input id="iReview" class="inp" maxlength="60">
+      <button id="iSaveBtn" class="btn btn-p">IEPを保存</button>
+      <h3 class="font-bold mt-2 mb-1 text-xs">保存済みIEP</h3><div id="iList"></div>
+    </div>
+    <div class="card"><h3 class="font-bold mb-1">プレビュー</h3>
+      <div id="iPreview" class="text-xs border rounded p-2 min-h-[200px]">左側のフォームに入力して「IEPを保存」を押すとプレビューが表示されます。</div>
+      <button id="iPdfBtn" class="btn mt-1">PDF出力</button>
+    </div>
+  </div>
+</section>
+
+<section id="sec-timetable" class="section hidden">
+  <h2 class="text-lg font-bold mb-2">時間割管理＋授業準備リマインダー</h2>
+  <div class="card"><h3 class="font-bold mb-1">週間時間割</h3>
+    <button id="ttReset" class="btn">リセット</button><button id="ttAdd" class="btn btn-p">授業を追加</button>
+    <div id="ttTable" class="overflow-auto mt-2"></div>
+  </div>
+  <div class="grid md:grid-cols-2 gap-2">
+    <div class="card"><h3 class="font-bold mb-1 text-xs">授業準備チェックリスト</h3><div id="prepChecks"></div></div>
+    <div class="card"><h3 class="font-bold mb-1 text-xs">明日の授業準備リマインダー</h3><div id="prepTomorrow"></div>
+      <label class="lbl mt-2">準備メモ（自由入力）</label><textarea id="prepMemo" class="inp" rows="3" maxlength="1000"></textarea>
+      <button id="prepMemoSave" class="btn">保存</button>
+    </div>
+  </div>
+</section>
+
+<section id="sec-contact" class="section hidden">
+  <h2 class="text-lg font-bold mb-2">保護者連絡文例ライブラリ</h2>
+  <div class="grid md:grid-cols-2 gap-2">
+    <div class="card"><h3 class="font-bold mb-1">シーンを選択</h3>
+      <select id="cScene" class="inp"><option>欠席連絡（安否確認）</option><option>忘れ物・持ち物の確認</option><option>よい出来事の報告</option><option>体調の心配・共感</option><option>規律に関するお願い</option><option>行事・日程のお知らせ</option></select>
+      <label class="lbl mt-2">児童生徒名（自動挿入）</label><select id="cStudent" class="inp"></select>
+      <label class="lbl">トーン</label><select id="cTone" class="inp"><option>標準（丁寧）</option><option>やわらかい</option><option>やや厳しい</option><option>心配・共感</option></select>
+      <label class="lbl">追加情報（自由入力）</label><textarea id="cExtra" class="inp" rows="2" maxlength="500"></textarea>
+      <button id="cGenBtn" class="btn btn-p mt-1">文面を生成</button>
+    </div>
+    <div class="card"><h3 class="font-bold mb-1">生成された文面 <span class="text-[10px] text-slate-400">下書き自動保存</span></h3>
+      <textarea id="cOut" class="inp" rows="8" maxlength="2000"></textarea>
+      <button id="cCopy" class="btn">コピー</button><button id="cSave" class="btn btn-p">保存</button><button id="cClear" class="btn">クリア</button>
+      <h3 class="font-bold mt-2 mb-1 text-xs">保存済み連絡履歴</h3><div id="cList"></div>
+    </div>
+  </div>
+</section>
+
+<section id="sec-submit" class="section hidden">
+  <h2 class="text-lg font-bold mb-2">提出物・連絡帳管理</h2>
+  <div class="grid md:grid-cols-2 gap-2">
+    <div class="card"><h3 class="font-bold mb-1">新規登録</h3>
+      <label class="lbl">種類</label><select id="sType" class="inp"><option>提出物（プリント・課題）</option><option>持ち物確認</option><option>連絡帳確認</option><option>保護者お知らせ</option><option>その他</option></select>
+      <label class="lbl">内容</label><input id="sContent" class="inp" maxlength="60">
+      <label class="lbl">期限日</label><input id="sDue" type="date" class="inp">
+      <label class="lbl">対象</label><select id="sTarget" class="inp"></select>
+      <button id="sRegBtn" class="btn btn-p">登録</button>
+      <h3 class="font-bold mt-2 mb-1 text-xs">一括操作</h3>
+      <button id="sBulkSub" class="btn">全員「提出済み」にする</button><button id="sBulkUn" class="btn">全員「未提出」に戻す</button>
+      <h3 class="font-bold mt-2 mb-1 text-xs">登録一覧</h3><div id="sList"></div>
+    </div>
+    <div class="card"><h3 class="font-bold mb-1">提出物チェックリスト</h3>
+      <select id="sSelect" class="inp"><option value="">提出物を選択</option></select>
+      <div id="sChecklist" class="mt-2 space-y-1"></div>
+    </div>
+  </div>
+</section>
+
+<section id="sec-letter" class="section hidden">
+  <h2 class="text-lg font-bold mb-2">学級通信・おたより作成</h2>
+  <div class="grid md:grid-cols-2 gap-2">
+    <div class="card">
+      <label class="lbl">テンプレートを選択</label>
+      <select id="lTemplate" class="inp"><option value="">（なし）</option><option>季節の便り</option><option>学習のふりかえり</option><option>行事のお知らせ</option><option>今週のまとめ</option></select>
+      <label class="lbl mt-2">タイトル・件名</label><input id="lTitle" class="inp" maxlength="40">
+      <label class="lbl">日付</label><input id="lDate" type="date" class="inp">
+      <label class="lbl">キーワード・メモ（文章化します）</label><textarea id="lKeywords" class="inp" rows="3" maxlength="500"></textarea>
+      <button id="lAiBtn" class="btn btn-p">AIで文章化</button><button id="lApplyBtn" class="btn">テンプレ適用</button>
+      <h3 class="font-bold mt-2 mb-1 text-xs">保存済みおたより</h3><div id="lList"></div>
+    </div>
+    <div class="card"><h3 class="font-bold mb-1">プレビュー・編集 <span class="text-[10px] text-slate-400">下書き自動保存</span></h3>
+      <textarea id="lBody" class="inp" rows="14" maxlength="5000"></textarea>
+      <button id="lCopy" class="btn">コピー</button><button id="lSave" class="btn btn-p">保存</button><button id="lPdf" class="btn">PDF</button>
+    </div>
+  </div>
+</section>
+
+<section id="sec-students" class="section hidden">
+  <h2 class="text-lg font-bold mb-2">児童生徒管理</h2>
+  <div class="grid md:grid-cols-2 gap-2">
+    <div class="card"><h3 class="font-bold mb-1">新規登録</h3>
+      <input id="stName" class="inp" placeholder="氏名" maxlength="20">
+      <div class="flex gap-1 mt-1"><select id="stGrade" class="inp"></select><select id="stClass" class="inp"></select></div>
+      <label class="lbl mt-1">誕生日（任意）</label><input id="stBday" type="date" class="inp">
+      <label class="lbl mt-1">特記事項（オプション）</label><input id="stNote" class="inp" maxlength="100">
+      <button id="stRegBtn" class="btn btn-p mt-1">登録</button><button id="stCancelBtn" class="btn hidden">編集キャンセル</button>
+      <div class="mt-2"><button id="stPdf" class="btn">🖨 名簿PDF</button></div>
+    </div>
+    <div class="card"><h3 class="font-bold mb-1">名簿</h3><div id="stList"></div></div>
+  </div>
+</section>
+
+<section id="sec-attendance" class="section hidden">
+  <h2 class="text-lg font-bold mb-2">出席簿</h2>
+  <div class="card">
+    <input id="aDate" type="date" class="inp !w-auto">
+    <button id="aAllPresent" class="btn btn-p">全員出席</button>
+    <button id="aPdf" class="btn">PDF</button>
+    <div id="aList" class="mt-2 space-y-1"></div>
+  </div>
+  <div class="card"><h3 class="font-bold mb-1 text-xs">月次集計</h3>
+    <input id="aMonth" type="month" class="inp !w-auto"> <button id="aCsv" class="btn">CSV出力</button>
+    <div id="aSummary" class="mt-2 overflow-auto"></div>
+  </div>
+</section>
+
+<section id="sec-duties" class="section hidden">
+  <h2 class="text-lg font-bold mb-2">係・掃除当番・席替え</h2>
+  <div class="card"><button id="duGenBtn" class="btn btn-p">自動生成</button><button id="duRotate" class="btn">🔁 ローテーション</button>
+    <div class="grid md:grid-cols-2 gap-2 mt-2">
+      <div><h3 class="font-bold mb-1 text-xs">係・役割</h3><div id="duRoles"></div>
+        <div class="mt-2 flex gap-1"><input id="duCustomName" class="inp" placeholder="カスタム係を追加" maxlength="20"><button id="duCustomAdd" class="btn">追加</button></div></div>
+      <div><h3 class="font-bold mb-1 text-xs">掃除当番</h3><div id="duClean"></div></div>
+    </div>
+  </div>
+  <div class="card"><h3 class="font-bold mb-1 text-xs">🪑 席替え <label class="text-[10px] ml-2"><input type="checkbox" id="seatEdit"> 手動調整（2マスクリックで入替）</label></h3>
+    列数 <select id="seatCols" class="inp !w-auto"><option>4</option><option>5</option><option selected>6</option><option>7</option><option>8</option></select>
+    <button id="seatGen" class="btn btn-p">席順を生成</button><button id="seatPdf" class="btn">PDF</button>
+    <div id="seatGrid" class="mt-2 overflow-auto"></div>
+  </div>
+</section>
+
+<section id="sec-journal" class="section hidden">
+  <h2 class="text-lg font-bold mb-2">クラス日誌・週案</h2>
+  <div class="grid md:grid-cols-2 gap-2">
+    <div class="card">
+      <button id="jWeekBtn" class="btn btn-p">週案生成</button><button id="jWeekPdf" class="btn">PDF</button>
+      <h3 class="font-bold mt-2 mb-1 text-xs">日誌入力</h3>
+      <input id="jDate" type="date" class="inp"><textarea id="jText" class="inp mt-1" rows="4" maxlength="2000"></textarea>
+      <button id="jAuto" class="btn">🤖 下書き自動作成</button><button id="jSave" class="btn btn-p">保存</button>
+      <h3 class="font-bold mt-2 mb-1 text-xs">今日の日誌</h3><div id="jToday"></div>
+      <h3 class="font-bold mt-2 mb-1 text-xs">日誌一覧</h3><div id="jList"></div>
+    </div>
+    <div class="card"><h3 class="font-bold mb-1">週案プレビュー</h3><div id="jWeekPreview" class="text-xs border rounded p-2 min-h-[200px]">週案を生成するとここに表示されます</div></div>
+  </div>
+</section>
+
+<section id="sec-event" class="section hidden">
+  <h2 class="text-lg font-bold mb-2">授業参観・懇談会</h2>
+  <div class="grid md:grid-cols-2 gap-2">
+    <div class="card"><h3 class="font-bold mb-1">イベント設定</h3>
+      <input id="eName" class="inp" placeholder="イベント名" maxlength="40"><input id="eDate" type="date" class="inp mt-1">
+      <select id="eType" class="inp mt-1"><option>授業参観</option><option>個人面談</option><option>懇談会</option></select>
+      <button id="eSave" class="btn btn-p mt-1">保存</button>
+      <h3 class="font-bold mt-2 mb-1 text-xs">イベント一覧</h3><div id="eList"></div>
+    </div>
+    <div class="card"><h3 class="font-bold mb-1">保護者受付</h3>
+      <select id="eSelect" class="inp"><option value="">イベントを選択</option></select>
+      <div id="eAttendList" class="mt-2 space-y-1"></div>
+      <h3 class="font-bold mt-2 mb-1 text-xs">出席状況</h3><div id="eSummary"></div>
+      <button id="ePdf" class="btn mt-1">PDF</button>
+    </div>
+  </div>
+</section>
+
+<section id="sec-interview" class="section hidden">
+  <h2 class="text-lg font-bold mb-2">🗓 面談スケジュール表</h2>
+  <div class="card">
+    <h3 class="font-bold mb-1 text-xs">セッションを作成（フィルター適用中の生徒に自動枠割り当て）</h3>
+    <label class="lbl">日付</label><input id="ivDate" type="date" class="inp !w-auto">
+    <label class="lbl">開始時刻</label><input id="ivStart" type="time" class="inp !w-auto" value="15:00">
+    <label class="lbl">1枠の時間</label><select id="ivDur" class="inp !w-auto"><option value="10">10分</option><option value="15" selected>15分</option><option value="20">20分</option><option value="30">30分</option></select>
+    <button id="ivGen" class="btn btn-p">面談表を生成</button>
+    <button id="ivDel" class="btn btn-d">選択セッションを削除</button>
+  </div>
+  <div class="card">
+    <h3 class="font-bold mb-1 text-xs">セッション選択・編集</h3>
+    <select id="ivSelect" class="inp"><option value="">セッションを選択</option></select>
+    <div id="ivTable" class="mt-2 overflow-auto"></div>
+    <div class="mt-2"><button id="ivPdf" class="btn">PDF出力</button></div>
+  </div>
+</section>
+
+<section id="sec-health" class="section hidden">
+  <h2 class="text-lg font-bold mb-2">保健室・心の天気</h2>
+  <div class="grid md:grid-cols-2 gap-2">
+    <div class="card"><h3 class="font-bold mb-1">保健室利用記録</h3>
+      <select id="hStudent" class="inp"></select>
+      <select id="hReason" class="inp mt-1"><option>頭痛</option><option>腹痛</option><option>発熱</option><option>けが</option><option>吐き気</option><option>その他</option></select>
+      <input id="hDate" type="date" class="inp mt-1">
+      <button id="hSave" class="btn btn-p mt-1">保存</button>
+      <h3 class="font-bold mt-2 mb-1 text-xs">保健室利用一覧</h3><div id="hList"></div>
+    </div>
+    <div class="card"><h3 class="font-bold mb-1">心の天気</h3>
+      <select id="heartStudent" class="inp"></select>
+      <div class="mt-1">
+        <button class="btn heart-btn" data-h="&#9728;&#65039;">&#9728;&#65039;</button><button class="btn heart-btn" data-h="&#9729;&#65039;">&#9729;&#65039;</button><button class="btn heart-btn" data-h="&#127783;&#65039;">&#127783;&#65039;</button><button class="btn heart-btn" data-h="&#9928;&#65039;">&#9928;&#65039;</button>
+      </div>
+      <h3 class="font-bold mt-2 mb-1 text-xs">心の天気 傾向（7日間）</h3><div id="heartTrend"></div>
+      <h3 class="font-bold mt-2 mb-1 text-xs">保健室利用傾向</h3><div id="healthTrend"></div>
+      <button id="hPdf" class="btn mt-1">PDF</button>
+    </div>
+  </div>
+</section>
+
+<section id="sec-portfolio" class="section hidden">
+  <h2 class="text-lg font-bold mb-2">児童生徒ポートフォリオ</h2>
+  <div class="card"><select id="pStudent" class="inp"></select>
+    <h3 class="font-bold mt-2 mb-1 text-xs">成長のストーリーと次の仕事</h3>
+    <div id="pNext" class="text-xs mb-2"></div>
+    <div id="pTimeline" class="space-y-1">児童生徒を選択すると、時系列の成長記録が表示されます</div>
+    <h3 class="font-bold mt-3 mb-1 text-xs">📝 申し送り・相談メモを追加</h3>
+    <textarea id="pMemo" class="inp" rows="2" maxlength="500" placeholder="例：進路相談。家庭での様子も確認すること。"></textarea>
+    <button id="pMemoSave" class="btn btn-p mt-1">メモを保存</button>
+  </div>
+</section>
+
+<section id="sec-growth" class="section hidden">
+  <h2 class="text-lg font-bold mb-2">学級の成長ストーリー</h2>
+  <div class="card text-xs">一人ひとりの変化を、学級全体の学習・関係づくり・次の指導へつなげます。観察記録の「成長軸タグ」を使うと精度が上がります。</div>
+  <div class="card">
+    <select id="grGrade" class="inp !w-auto"></select><select id="grClass" class="inp !w-auto"></select>
+    <div id="grOut" class="mt-2"></div>
+  </div>
+</section>
+
+<section id="sec-design" class="section hidden">
+  <h2 class="text-lg font-bold mb-2">授業デザイン4.0</h2>
+  <div class="card text-xs">「今、この学級とこの生徒に、次にどんな学びを用意するか」を考えるための材料を、既存記録から整理します。<br><b>教師の判断を中心にします。</b>この画面は授業を自動決定するものではありません。実際の生徒の姿を確認し、最終判断は先生が行ってください。</div>
+  <div class="card">
+    <select id="dsGrade" class="inp !w-auto"></select><select id="dsClass" class="inp !w-auto"></select>
+    <div id="dsOut" class="mt-2"></div>
+  </div>
+</section>
+
+<section id="sec-analysis" class="section hidden">
+  <h2 class="text-lg font-bold mb-2">データ分析・早期アラート</h2>
+  <div class="card"><button id="anRun" class="btn btn-p">再分析</button>
+    <div class="grid md:grid-cols-2 gap-2 mt-2">
+      <div><h3 class="font-bold text-xs mb-1">要注目児童生徒</h3><div id="anWatch"></div></div>
+      <div><h3 class="font-bold text-xs mb-1">傾向変化検知</h3><div id="anTrend"></div></div>
+      <div><h3 class="font-bold text-xs mb-1">出席×成績 相関</h3><div id="anCorr1"></div></div>
+      <div><h3 class="font-bold text-xs mb-1">提出物×観察記録 相関</h3><div id="anCorr2"></div></div>
+    </div>
+  </div>
+</section>
+
+<section id="sec-settings" class="section hidden">
+  <h2 class="text-lg font-bold mb-2">設定</h2>
+  <div class="card"><h3 class="font-bold mb-1">基本情報</h3>
+    <label class="lbl">学校種</label><select id="setSchoolType" class="inp !w-auto"><option>小学校</option><option>中学校</option><option>高等学校</option></select>
+    <label class="lbl">学校名</label><input id="setSchool" class="inp" maxlength="40">
+    <label class="lbl">担任名</label><input id="setTeacher" class="inp" maxlength="20">
+    <div class="flex gap-2">
+      <div><label class="lbl">担任学年</label><select id="setGrade" class="inp"></select></div>
+      <div><label class="lbl">担任クラス</label><select id="setClass" class="inp"></select></div>
+      <div><label class="lbl">年度</label><input id="setYear" class="inp" maxlength="4"></div>
+    </div>
+    <button id="setSave" class="btn btn-p mt-2">設定を保存</button>
+  </div>
+  <div class="card"><h3 class="font-bold mb-1">プライバシー・安全設定</h3>
+    <label class="lbl">画面ロックPIN（4〜12桁・空欄なら変更なし）</label><input id="secPin" type="password" inputmode="numeric" class="inp !w-40" maxlength="12">
+    <label class="lbl">自動ロック</label><select id="secAuto" class="inp !w-auto"><option value="0">しない</option><option value="5">5分</option><option value="10">10分</option><option value="15">15分</option><option value="30">30分</option></select>
+    <div class="mt-2"><button id="secSave" class="btn btn-p">安全設定を保存</button><button id="secDiagBtn" class="btn">安全診断を実行</button><button id="selfTestBtn" class="btn">🩺 全画面セルフテスト</button><button id="secLock" class="btn">画面をロック</button></div>
+    <div id="secDiag" class="mt-2"></div>
+  </div>
+  <div class="card"><h3 class="font-bold mb-1">データ管理・引き継ぎ</h3>
+    <div id="storageMeter" class="mb-2"></div>
+    <button id="encBak" class="btn btn-p">暗号化バックアップ（推奨）</button>
+    <label class="btn cursor-pointer">暗号化バックアップを復元<input id="encRestore" type="file" accept=".json" class="hidden"></label>
+    <button id="bakBtn" class="btn">全データバックアップ（JSON）</button>
+    <label class="btn cursor-pointer">復元（JSON）<input id="restoreFile" type="file" accept=".json" class="hidden"></label>
+    <div class="mt-2"><button id="handoverBtn" class="btn btn-p">📦 引き継ぎパックPDF</button><button id="handoverJson" class="btn">📦 引き継ぎパックJSON</button></div>
+    <p class="text-[10px] text-slate-500 mt-1">引き継ぎパックは個人情報を含みます。学校の規程に従い、安全な媒体で受け渡してください。JSONは後任の端末で「復元」から読み込めます。</p>
+    <button id="wipeBtn" class="btn btn-d mt-2">全データ削除</button>
+    <h3 class="font-bold mt-3 mb-1 text-xs">個人情報の取り扱いについて</h3>
+    <p class="text-xs">児童生徒の氏名・特記事項などの個人情報は、このブラウザ内のlocalStorageに保存されます。誕生日は任意入力です。共用PCではご注意ください。PINを設定すると起動時ロック・暗号化バックアップが有効になります（PINはソルト付きハッシュのみ保存）。ロック中は再読込時もPINが必要です。復元ファイルは自動的にサニタイズされます。定期的なバックアップと、不要になったデータの削除をお願いします。</p>
+  </div>
+</section>
+
+</main>
+</div>
+
+<nav class="fixed bottom-0 w-full bg-white/90 backdrop-blur border-t border-purple-100 flex justify-around py-1 md:hidden z-40">
+  <button class="btn" data-nav="dashboard">🏠 ホーム</button><button class="btn" data-nav="material">📖 教材</button><button class="btn" data-nav="letter">📰 通信</button><button class="btn" data-nav="grades">📊 成績</button><button class="btn" data-nav="contact">📞 連絡</button>
+</nav>
+
+<div id="confirmModal" class="hidden fixed inset-0 bg-black/40 z-50 flex items-center justify-center">
+  <div class="bg-white rounded-2xl p-6 w-72"><h3 class="font-bold mb-2">確認</h3><p id="confirmMsg" class="mb-4">よろしいですか？</p>
+  <div class="flex justify-end gap-2"><button id="confirmYes" class="btn btn-p">はい</button><button id="confirmNo" class="btn">キャンセル</button></div></div>
+</div>
+
+<div id="ttModal" class="hidden fixed inset-0 bg-black/40 z-50 flex items-center justify-center">
+  <div class="bg-white rounded-2xl p-6 w-80"><h3 class="font-bold mb-2">授業を追加・編集</h3>
+    <label class="lbl">曜日</label><select id="ttDay" class="inp"><option>月</option><option>火</option><option>水</option><option>木</option><option>金</option><option>土</option></select>
+    <label class="lbl">時限</label><select id="ttPeriod" class="inp"><option>1限</option><option>2限</option><option>3限</option><option>4限</option><option>5限</option><option>6限</option></select>
+    <label class="lbl">教科</label><input id="ttSubject" class="inp" maxlength="20"><label class="lbl">教室・備考</label><input id="ttRoom" class="inp" maxlength="20">
+    <div class="flex justify-end gap-2 mt-3"><button id="ttDelete" class="btn btn-d mr-auto">削除</button><button id="ttSave" class="btn btn-p">保存</button><button id="ttCancel" class="btn">キャンセル</button></div>
+  </div>
+</div>
+<div id="toast" class="hidden fixed bottom-16 left-1/2 -translate-x-1/2 bg-slate-900/90 text-white text-xs px-4 py-2 rounded-full z-[70]"></div>
+
+<script>
+'use strict';
+/* ===== 基盤 ===== */
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const LS='kyomu_partner_v13';
+const EMOJI=['\u2600\uFE0F','\u2601\uFE0F','\uD83C\uDF27\uFE0F','\u26C8\uFE0F'];
+const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+function todayStr(d=new Date()){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
+function daysDiff(d){return Math.round((new Date(d)-new Date(todayStr()))/86400000);}
+function dueLabel(d){const n=daysDiff(d);return n<0?`⚠️ 超過${-n}日`:n===0?'📥 今日':`🕐 あと${n}日`;}
+function addMin(hm,m){const p=String(hm||'15:00').split(':');const h=+p[0]||0;const mm=+p[1]||0;const tot=h*60+mm+(m||0);return `${String(Math.floor(tot/60)%24).padStart(2,'0')}:${String(tot%60).padStart(2,'0')}`;}
+function csvCell(c){let s=String(c??'');if(/^[=+\-@]/.test(s))s="'"+s;return '"'+s.replace(/"/g,'""')+'"';}
+function toCSV(rows){return '\uFEFF'+rows.map(r=>r.map(csvCell).join(',')).join('\r\n');}
+function cleanHtml(s){return String(s??'').replace(/<(script|iframe|object|embed)[\s\S]*?<\/\1>/gi,'').replace(/<(script|iframe|object|embed)[^>]*>/gi,'').replace(/\son[a-z]+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi,'').replace(/javascript\s*:/gi,'');}
+function sanitizeDB(d){(d.materials||[]).forEach(m=>m.content=cleanHtml(m.content));d.weekly=cleanHtml(d.weekly);
+(d.observations||[]).forEach(o=>{if(o.media&&!/^data:image\/(png|jpeg)/.test(o.media))o.media='';});return d;}
+function defaultDB(){return{settings:{schoolType:'中学校',school:'',teacher:'',grade:'',klass:'',year:'2026'},security:{pinHash:'',salt:'',autoLock:0},meta:{lastBackup:'',checklist:{},drafts:{},onboarded:0,bigFont:0,dark:0},seats:{date:'',cols:6,grid:[]},
+students:[],materials:[],observations:[],guidance:[],tests:[],ieps:[],timetable:{},prep:{date:'',checks:{}},prepMemo:'',contacts:[],submissions:[],letters:[],attendance:{},duties:{roles:[],cleaning:[],custom:[]},journals:[],weekly:'',events:[],health:[],heart:{},memos:[],interviews:[],reportSaves:[]};}
+function mergeDefault(d){const b=defaultDB(),o={...b,...d};o.settings={...b.settings,...(d.settings||{})};o.security={...b.security,...(d.security||{})};o.meta={...b.meta,...(d.meta||{})};o.duties={...b.duties,...(d.duties||{})};o.seats={...b.seats,...(d.seats||{})};return sanitizeDB(o);}
+let DB;try{DB=mergeDefault(JSON.parse(localStorage.getItem(LS))||{});}catch(e){DB=defaultDB();}
+function save(){try{localStorage.setItem(LS,JSON.stringify(DB));}catch(e){toast('⚠ 保存に失敗（容量超過の可能性）。バックアップ後にデータ削除を検討してください。');}}
+window.addEventListener('error',e=>toast('⚠ エラー：'+(e.message||'不明')));
+window.addEventListener('unhandledrejection',e=>toast('⚠ 非同期エラー：'+((e.reason&&e.reason.message)||'不明')));
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.remove('hidden');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.add('hidden'),2500);}
+let confirmCb=null;
+function ask(m,cb){$('#confirmMsg').textContent=m;confirmCb=cb;$('#confirmModal').classList.remove('hidden');}
+$('#confirmYes').onclick=()=>{$('#confirmModal').classList.add('hidden');if(confirmCb)confirmCb();};
+$('#confirmNo').onclick=()=>$('#confirmModal').classList.add('hidden');
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){$('#confirmModal').classList.add('hidden');$('#ttModal').classList.add('hidden');$('#gSearchRes').classList.add('hidden');}});
+function printDoc(title,html){const w=window.open('','_blank');if(!w){toast('ポップアップを許可してください');return;}
+const sub=(DB.settings.school||DB.settings.teacher)?`<p style="font-size:12px;color:#555">${esc(DB.settings.school||'')} ${esc(DB.settings.teacher||'')}</p>`:'';
+w.document.write(`<html><head><meta charset="utf-8"><title>${esc(title)}</title><style>body{font-family:sans-serif;padding:24px;line-height:1.7;font-size:13px}table{border-collapse:collapse;width:100%}td,th{border:1px solid #333;padding:5px;font-size:12px}h1{font-size:20px}h2{font-size:15px;margin-top:14px}pre{white-space:pre-wrap}</style></head><body><h1>${esc(title)}</h1>${sub}${html}<script>setTimeout(()=>window.print(),300)<\/script></body></html>`);w.document.close();}
+function copyText(t){if(!t){toast('コピーする内容がありません');return;}if(navigator.clipboard){navigator.clipboard.writeText(t).then(()=>toast('コピーしました'));}else{const ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();toast('コピーしました');}}
+function download(text,name,type='application/json'){const blob=new Blob([text],{type});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000);}
+
+/* ===== セキュリティ ===== */
+async function sha(t){try{if(crypto&&crypto.subtle){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(t));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('');}}catch(e){}let h=0;for(const c of('s'+t)){h=(h*31+c.charCodeAt(0))|0;}return 'f'+h;}
+function b64(buf){const u=new Uint8Array(buf);let s='';for(let i=0;i<u.length;i+=0x8000)s+=String.fromCharCode.apply(null,u.subarray(i,i+0x8000));return btoa(s);}
+function unb64(s){return Uint8Array.from(atob(s),c=>c.charCodeAt(0));}
+async function aesKey(pin,salt){const d=await crypto.subtle.digest('SHA-256',new TextEncoder().encode('kyomu:'+pin+':'+salt));return crypto.subtle.importKey('raw',d,{name:'AES-GCM'},false,['encrypt','decrypt']);}
+function verifyPin(v){return sha((DB.security.salt||'')+v).then(h=>h===DB.security.pinHash);}
+function showLock(){sessionStorage.removeItem('kp_unlocked');$('#lockOverlay').classList.remove('hidden');$('#lockPin').value='';$('#lockMsg').textContent='';setTimeout(()=>$('#lockPin').focus(),60);}
+let failCount=0,lockWait=0;
+async function tryUnlock(){if(Date.now()<lockWait){$('#lockMsg').textContent='しばらく待ってからお試しください';return;}
+const ok=await verifyPin($('#lockPin').value);
+if(ok){failCount=0;sessionStorage.setItem('kp_unlocked','1');$('#lockOverlay').classList.add('hidden');toast('ロック解除しました');}
+else{failCount++;if(failCount>=5){lockWait=Date.now()+30000;failCount=0;$('#lockMsg').textContent='失敗回数超過。30秒後に再試行できます';}else{$('#lockMsg').textContent='PINが正しくありません';}}}
+$('#lockUnlock').onclick=tryUnlock;
+$('#lockPin').onkeydown=e=>{if(e.key==='Enter')tryUnlock();};
+function lockNow(){if(!DB.security.pinHash){toast('先に設定でPINを設定してください');go('settings');return;}showLock();}
+document.addEventListener('keydown',e=>{if(e.ctrlKey&&e.shiftKey&&(e.key==='L'||e.key==='l')){e.preventDefault();lockNow();}});
+let lockTimer=null;
+function armAutoLock(){clearTimeout(lockTimer);const m=+DB.security.autoLock||0;if(m>0&&DB.security.pinHash)lockTimer=setTimeout(showLock,m*60000);}
+['click','keydown'].forEach(ev=>document.addEventListener(ev,armAutoLock,{passive:true}));
+$('#secSave').onclick=async()=>{const pin=$('#secPin').value.trim();
+if(pin){if(!/^\d{4,12}$/.test(pin)){toast('PINは4〜12桁の数字で設定してください');return;}
+const salt=(crypto&&crypto.getRandomValues)?b64(crypto.getRandomValues(new Uint8Array(8))):uid();
+DB.security.salt=salt;DB.security.pinHash=await sha(salt+pin);sessionStorage.setItem('kp_unlocked','1');}
+DB.security.autoLock=+$('#secAuto').value;save();$('#secPin').value='';armAutoLock();toast('安全設定を保存しました');};
+$('#secLock').onclick=lockNow;$('#dashLock').onclick=lockNow;
+$('#secDiagBtn').onclick=()=>{const r=[];const sec=DB.security;
+r.push([!!sec.pinHash,'ロックPINが設定されている（ソルト付きハッシュ）']);
+r.push([sec.autoLock>0,'自動ロックが有効（'+(sec.autoLock||'—')+'分）']);
+r.push([!!DB.meta.lastBackup,'バックアップ実施'+(DB.meta.lastBackup?'（'+DB.meta.lastBackup+'）':'なし')]);
+r.push([!!(crypto&&crypto.subtle),'暗号化機能利用可（セキュアコンテキスト）']);
+let ok=false;try{localStorage.setItem('__t','1');localStorage.removeItem('__t');ok=true;}catch(e){}
+r.push([ok,'localStorage利用可']);
+r.push([DB.students.length<=300,'データ量妥当（生徒'+DB.students.length+'名）']);
+$('#secDiag').innerHTML=r.map(x=>`<div class="text-xs py-0.5">${x[0]?'✅':'⚠️'} ${x[1]}</div>`).join('');};
+async function encBackup(){if(!DB.security.pinHash){toast('先にPINを設定してください（復元時の鍵になります）');go('settings');return;}
+if(!(crypto&&crypto.subtle)){toast('この環境は暗号化非対応です。平文バックアップを使用してください。');return;}
+const pin=prompt('バックアップ用PIN（ロックPINと同じ）を入力');if(pin==null)return;
+if(!(await verifyPin(pin))){toast('PINが違います');return;}
+try{const salt=b64(crypto.getRandomValues(new Uint8Array(16)));const iv=crypto.getRandomValues(new Uint8Array(12));
+const key=await aesKey(pin,salt);const ct=await crypto.subtle.encrypt({name:'AES-GCM',iv},key,new TextEncoder().encode(JSON.stringify(DB)));
+download(JSON.stringify({app:'kyomu',enc:1,salt,iv:b64(iv),data:b64(ct)}),'kyomu_enc_'+todayStr()+'.json');
+DB.meta.lastBackup=todayStr();save();toast('暗号化バックアップを保存しました');}catch(e){toast('暗号化に失敗しました');}}
+$('#encBak').onclick=encBackup;$('#dashBak').onclick=encBackup;
+$('#encRestore').onchange=async e=>{const f=e.target.files[0];if(!f)return;let j;try{j=JSON.parse(await f.text());}catch(err){toast('ファイルが不正です');return;}
+if(!j.enc){toast('暗号化ファイルではありません。通常復元を使用してください。');return;}
+const pin=prompt('復元用PINを入力');if(pin==null)return;
+try{const key=await aesKey(pin,j.salt);const pt=await crypto.subtle.decrypt({name:'AES-GCM',iv:unb64(j.iv)},key,unb64(j.data));
+DB=mergeDefault(JSON.parse(new TextDecoder().decode(pt)));save();init();toast('復元しました（サニタイズ済）');}catch(err){toast('復元失敗（PIN違いまたは破損）');}e.target.value='';};
+
+/* ===== ナビ・フィルタ・検索・表示 ===== */
+let filter={grade:'',klass:''},current='dashboard';
+const NAV=[['dashboard','🏠 ダッシュボード'],['material','📖 授業案ジェネレーター'],['observe','📷 観察記録＋評価文案'],['report','📝 通知表コメント生成'],['guidance','📋 指導要録作成'],['grades','📊 成績管理＋グラフ'],['iep','🎯 IEPテンプレート'],['timetable','🕐 時間割＆準備'],['contact','📞 保護者連絡文例'],['submit','📥 提出物・連絡帳'],['letter','📰 学級通信・おたより'],['students','🧑 児童生徒管理'],['attendance','✅ 出席簿'],['duties','🧹 係・掃除・席替え'],['journal','📒 クラス日誌・週案'],['event','🏫 授業参観・懇談会'],['interview','🗓 面談スケジュール'],['health','💗 保健室・心の天気'],['portfolio','📁 ポートフォリオ'],['growth','🌱 学級の成長ストーリー'],['design','🧭 授業デザイン4.0'],['analysis','📈 データ分析'],['settings','⚙️ 設定']];
+function buildNav(){const overdue=DB.submissions.filter(s=>s.due<todayStr()&&submitStudents(s).some(x=>!s.status[x.id])).length;
+const watch=watchList().length;
+$('#sideNav').innerHTML=NAV.map(n=>{let b='';
+if(n[0]==='submit'&&overdue)b=`<span class="chip chip-warn">${overdue}</span>`;
+if(n[0]==='analysis'&&watch)b=`<span class="chip chip-warn">${watch}</span>`;
+return `<button class="nav-btn ${current===n[0]?'active':''}" data-nav="${n[0]}"><span class="flex-1">${n[1]}</span>${b}</button>`;}).join('');}
+let stream=null,rec=null,camShot=null;
+function stopMedia(){if(stream){stream.getTracks().forEach(t=>t.stop());stream=null;}if(rec){try{rec.stop();}catch(e){}rec=null;}}
+function go(id){stopMedia();current=id;$$('.section').forEach(s=>s.classList.toggle('hidden',s.id!=='sec-'+id));render(id);}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-nav]');if(b)go(b.dataset.nav);});
+$('#menuBtn').onclick=()=>$('#sidebar').classList.toggle('hidden');
+function filteredStudents(){return DB.students.filter(s=>(!filter.grade||s.grade===filter.grade)&&(!filter.klass||s.klass===filter.klass));}
+const sName=id=>(DB.students.find(s=>s.id===id)||{}).name||'(削除済み)';
+function gradeOptions(all){let o=all?'<option value="">すべて</option>':'';for(let g=1;g<=6;g++)o+=`<option>${g}年</option>`;return o;}
+function classOptions(all){let o=all?'<option value="">すべて</option>':'';for(let k=1;k<=6;k++)o+=`<option>${k}組</option>`;return o;}
+$('#fGrade').innerHTML='<option value="">すべての学年</option>'+gradeOptions(false);$('#fClass').innerHTML='<option value="">すべてのクラス</option>'+classOptions(false);
+['mGrade','stGrade'].forEach(id=>$('#'+id).innerHTML=gradeOptions(false));
+$('#stClass').innerHTML=classOptions(false);
+$('#setGrade').innerHTML='<option value="">未設定</option>'+gradeOptions(false);$('#setClass').innerHTML='<option value="">未設定</option>'+classOptions(false);
+['grGrade','dsGrade'].forEach(id=>$('#'+id).innerHTML=gradeOptions(true));
+['grClass','dsClass'].forEach(id=>$('#'+id).innerHTML=classOptions(true));
+$('#fGrade').onchange=e=>{filter.grade=e.target.value;render(current);};
+$('#fClass').onchange=e=>{filter.klass=e.target.value;render(current);};
+$('#fClear').onclick=()=>{filter={grade:'',klass:''};$('#fGrade').value='';$('#fClass').value='';render(current);};
+$('#gSearch').addEventListener('input',e=>{const q=e.target.value.trim();const res=$('#gSearchRes');
+if(!q){res.classList.add('hidden');return;}
+const m=DB.students.filter(s=>s.name.includes(q)).slice(0,6);
+res.innerHTML=m.length?m.map(s=>`<button class="block w-full text-left text-xs px-3 py-2 hover:bg-purple-50 g-res" data-id="${s.id}">${esc(s.name)} <span class="chip">${s.grade} ${s.klass}</span></button>`).join(''):'<div class="text-xs px-3 py-2 text-slate-500">該当なし</div>';
+res.classList.remove('hidden');});
+$('#gSearchRes').addEventListener('click',e=>{const b=e.target.closest('.g-res');if(!b)return;$('#gSearch').value='';$('#gSearchRes').classList.add('hidden');go('portfolio');$('#pStudent').value=b.dataset.id;renderPortfolio();});
+document.addEventListener('click',e=>{if(!e.target.closest('#gSearch')&&!e.target.closest('#gSearchRes'))$('#gSearchRes').classList.add('hidden');});
+function refreshStudentSelects(){const opts=filteredStudents().map(s=>`<option value="${s.id}">${esc(s.name)}</option>`).join('')||'<option value="">（未登録）</option>';
+['oStudent','gStudent','iStudent','cStudent','hStudent','heartStudent','pStudent'].forEach(id=>{const el=$('#'+id);if(!el)return;const v=el.value;el.innerHTML=opts;el.value=v;});
+const combos=[...new Set(DB.students.map(s=>s.grade+'・'+s.klass))];
+$('#sTarget').innerHTML='<option value="all">クラス全員</option>'+combos.map(c=>`<option>${c}</option>`).join('');}
+const DRAFT_IDS=['lBody','cOut','oText'];
+let draftT=null;
+DRAFT_IDS.forEach(id=>$('#'+id).addEventListener('input',e=>{clearTimeout(draftT);draftT=setTimeout(()=>{DB.meta.drafts=DB.meta.drafts||{};DB.meta.drafts[id]=e.target.value;save();},600);}));
+function clearDraft(id){if(DB.meta.drafts){DB.meta.drafts[id]='';save();}}
+function restoreDrafts(){DRAFT_IDS.forEach(id=>{const v=(DB.meta.drafts||{})[id];if(v)$('#'+id).value=v;});}
+window.addEventListener('pagehide',()=>{DB.meta.drafts=DB.meta.drafts||{};DRAFT_IDS.forEach(id=>{const el=$('#'+id);if(el)DB.meta.drafts[id]=el.value;});try{localStorage.setItem(LS,JSON.stringify(DB));}catch(e){}});
+function applyFont(){document.documentElement.classList.toggle('bigfont',!!DB.meta.bigFont);}
+$('#fontBtn').onclick=()=>{DB.meta.bigFont=DB.meta.bigFont?0:1;save();applyFont();toast(DB.meta.bigFont?'文字サイズ：大':'文字サイズ：標準');};
+function applyDark(){document.documentElement.classList.toggle('dark',!!DB.meta.dark);$('#darkBtn').textContent=DB.meta.dark?'☀️':'🌙';}
+$('#darkBtn').onclick=()=>{DB.meta.dark=DB.meta.dark?0:1;save();applyDark();toast(DB.meta.dark?'ダークモード：オン':'ダークモード：オフ');};
+
+/* ===== 共通ヘルパ ===== */
+function submitStudents(s){if(s.target==='all'||!s.target)return DB.students;const[g,k]=(s.target||'').split('・');return DB.students.filter(x=>x.grade===g&&x.klass===k);}
+function attendanceRate(sid){let p=0,n=0;for(const d in DB.attendance){const v=DB.attendance[d][sid];if(v){n++;if(v!=='欠席')p++;}}return n?Math.round(p/n*100):100;}
+function watchList(){return DB.students.map(s=>{let score=0;const reasons=[];const rate=attendanceRate(s.id);
+if(rate<90){score+=2;reasons.push('出席率'+rate+'%');}
+if(DB.tests.some(t=>t.scores[s.id]!=null&&t.scores[s.id]<t.max*0.6)){score+=2;reasons.push('低得点あり');}
+const un=DB.submissions.filter(x=>!x.status[x.id]).length;if(un){score+=1;reasons.push('未提出'+un);}
+if(Object.values(DB.heart).some(h=>h[s.id]===EMOJI[3])){score+=2;reasons.push('心の天気 嵐');}
+return{s,score,reasons};}).filter(x=>x.score>0).sort((a,b)=>b.score-a.score);}
+function bdayInfo(s){if(!s.bday)return null;const p=s.bday.split('-');const m=+p[1],d=+p[2];if(!m||!d)return null;
+const now=new Date();const base=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+let next=new Date(now.getFullYear(),m-1,d);if(next<base)next.setFullYear(next.getFullYear()+1);
+return{diff:Math.round((next-base)/86400000),md:`${m}/${d}`};}
+const CHK=['出席入力','心の天気確認','提出物確認','日誌入力','保護者連絡メモ','明日の準備'];
+
+/* ===== ダッシュボード ===== */
+function renderDashboard(){
+const now=new Date();$('#dDate').innerHTML=`📅 ${now.getFullYear()}年${now.getMonth()+1}月${now.getDate()}日（${'日月火水木金土'[now.getDay()]}）／ 令和${now.getFullYear()-2018}年`;
+$('#dWelcome').classList.toggle('hidden',DB.students.length>0||!!DB.meta.onboarded);
+if(DB.meta.checklist.date!==todayStr())DB.meta.checklist={date:todayStr(),items:{}};
+$('#dChecklist').innerHTML=CHK.map((c,i)=>`<label class="block text-xs py-0.5"><input type="checkbox" class="d-chk" data-i="${i}" ${DB.meta.checklist.items[i]?'checked':''}> ${c}</label>`).join('');
+const sec=DB.security;
+let bak; if(!DB.meta.lastBackup)bak='⚠️ 未実施'; else{const age=daysDiff(DB.meta.lastBackup);bak=age>7?`⚠️ ${age}日前（推奨：7日以内）`:'✅ '+DB.meta.lastBackup;}
+$('#dPrivacy').innerHTML=`<div class="text-xs">🔒 ロック：${sec.pinHash?'✅ 設定済':'⚠️ 未設定'}<br>⏱ 自動ロック：${sec.autoLock>0?sec.autoLock+'分':'⚠️ なし'}<br>💾 最終バックアップ：${bak}</div>`;
+let due='';
+DB.submissions.forEach(s=>{const un=submitStudents(s).filter(x=>!s.status[x.id]).length;if(!un)return;
+due+=`<div class="text-xs py-0.5">${dueLabel(s.due)} ${esc(s.content)}（未提出${un}）</div>`;});
+DB.events.forEach(ev=>{const d=daysDiff(ev.date);if(d>=0&&d<=7)due+=`<div class="text-xs py-0.5">🏫 あと${d}日 ${esc(ev.name)}</div>`;});
+(DB.interviews||[]).forEach(iv=>{const d=daysDiff(iv.date);if(d>=0&&d<=7)due+=`<div class="text-xs py-0.5">🗓 あと${d}日 面談（${iv.slots.length}枠）</div>`;});
+$('#dDue').innerHTML=due||'<p class="text-xs">なし</p>';
+const t=todayStr(),st=filteredStudents(),ids=st.map(s=>s.id),mon=t.slice(0,7);
+const att=DB.attendance[t]||{};const heart=DB.heart[t]||{};
+const cards=[['登録児童生徒',st.length],['今月の観察記録',DB.observations.filter(o=>ids.includes(o.studentId)&&o.date.startsWith(mon)).length],['作成済み教材',DB.materials.length],['未提出物',DB.submissions.reduce((n,s)=>n+st.filter(x=>!s.status[x.id]).length,0)],['今日の欠席',st.filter(x=>att[x.id]==='欠席').length],['保健室利用（今月）',DB.health.filter(h=>ids.includes(h.studentId)&&h.date.startsWith(mon)).length],['心の天気 嵐',st.filter(x=>heart[x.id]===EMOJI[3]).length],['要注目児童',watchList().length]];
+$('#dCards').innerHTML=cards.map(c=>`<div class="card !mb-0 text-center"><div class="text-xl font-bold text-purple-600">${c[1]}</div><div class="text-[10px]">${c[0]}</div></div>`).join('');
+const dn=['日','月','火','水','木','金','土'][now.getDay()];
+const pairs=PERIODS.map(p=>[p,DB.timetable[dn+'-'+p]]).filter(x=>x[1]);
+$('#dLessons').innerHTML=dn==='日'?'<p>（日曜）</p>':(pairs.length?pairs.map(x=>`<div class="py-0.5">${x[0]} ${esc(x[1].subject)} <span class="text-[10px] text-slate-400">${esc(x[1].room||'')}</span></div>`).join(''):'<p class="text-slate-400">登録なし</p>');
+const bd=st.map(s=>({s,i:bdayInfo(s)})).filter(x=>x.i&&x.i.diff<=7).sort((a,b)=>a.i.diff-b.i.diff).slice(0,4);
+$('#dBday').innerHTML=bd.length?bd.map(x=>`<div class="py-0.5">🎂 ${esc(x.s.name)}（${x.i.md}${x.i.diff===0?' 🎉 今日！':' あと'+x.i.diff+'日'}）</div>`).join(''):'<p class="text-slate-400">今週はありません</p>';
+$('#dRecent').innerHTML=[...DB.observations].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,5).map(o=>`<div class="text-xs border-b py-1">${o.date} <b>${esc(sName(o.studentId))}</b> ${esc((o.text||'').slice(0,40))}</div>`).join('')||'<p class="text-xs">記録がありません。</p>';
+const d2=DB.submissions.filter(s=>s.due===t);
+$('#dToday').innerHTML=d2.length?d2.map(s=>`<div class="text-xs border-b py-1">${esc(s.content)}（未提出 ${submitStudents(s).filter(x=>!s.status[x.id]).length} 名）</div>`).join(''):'<p class="text-xs">今日の提出物はありません。</p>';}
+$('#dChecklist').addEventListener('change',e=>{DB.meta.checklist.items[e.target.dataset.i]=e.target.checked;save();});
+$('#dWelcomeClose').onclick=()=>{DB.meta.onboarded=1;save();$('#dWelcome').classList.add('hidden');};
+let pickTimer=null;
+$('#pickBtn').onclick=()=>{const st=filteredStudents();if(!st.length){toast('生徒を登録してください');return;}
+clearInterval(pickTimer);let i=0;const total=12+st.length;
+pickTimer=setInterval(()=>{$('#pickName').textContent=st[i%st.length].name;i++;
+if(i>total){clearInterval(pickTimer);$('#pickName').textContent=st[Math.floor(Math.random()*st.length)].name+' 🎉';}},70);};
+
+/* ===== 授業案 ===== */
+let lastMaterial='';
+$('#mGenBtn').onclick=()=>{const u=$('#mUnit').value.trim();if(!u){toast('単元・テーマを入力してください');return;}
+const subj=$('#mSubject').value,t=Math.min(Math.max(+$('#mTime').value||45,20),120);
+lastMaterial=`<h2>${esc(subj)}科 授業計画「${esc(u)}」</h2><p>${esc($('#mSchool').value)} ${esc($('#mGrade').value)} ／ ${t}分</p>
+<h2>本時の目標</h2><p>・${esc(u)}について、自分の考えを持ち、言葉や式で説明できる。<br>・友達と意見を比べ合い、考えを深めることができる。</p>
+<h2>準備・資料</h2><p>ワークシート、実物投影機、既習事項まとめカード</p>
+<h2>授業の流れ（${t}分）</h2><p>【導入 5分】${pick(['前時のふりかえりをペアで共有させ、本時の課題につなげる。','実物を提示し、見通しを持たせて課題を設定する。','問いかけから始め、既習と関連づけて課題を設定する。'])}</p>
+<p>【展開 ${Math.max(t-15,20)}分】${pick(['予想→検証→結論の流れで探究させる。','個別思考→ペア相談→全体共有のサイクルで進める。','操作活動と話し合いを組み合わせて理解を深める。'])}<br>①個人で考える ②ペアで伝え合う ③全体で比較・整理</p>
+<p>【終末 10分】まとめをノートに記入。ふりかえりカードで自己評価。次時の予告。</p>
+<h2>評価規準</h2><p>・知識・技能：${esc(u)}の基本的な扱いができる。<br>・思考・判断・表現：考えの根拠を説明できる。<br>・主体的に取り組む態度：課題に進んで取り組む。</p>
+<h2>板書計画</h2><p>左：課題と予想 中央：比較図・要点 右：まとめとふりかえり</p>`;
+$('#mPreview').innerHTML=lastMaterial;toast('授業案を作成しました');};
+$('#mSaveBtn').onclick=()=>{if(!lastMaterial){toast('先に作成してください');return;}DB.materials.push({id:uid(),title:$('#mUnit').value,subject:$('#mSubject').value,content:lastMaterial,date:todayStr()});save();renderMaterial();toast('保存しました');};
+$('#mPdfBtn').onclick=()=>{if(lastMaterial)printDoc('授業計画 '+$('#mUnit').value,lastMaterial);};
+function renderMaterial(){$('#mSavedList').innerHTML=DB.materials.length?DB.materials.map(m=>`<div class="text-xs border-b py-1 flex gap-2 items-center"><span class="flex-1">${m.date} 【${esc(m.subject)}】${esc(m.title)}</span><button class="btn m-load" data-id="${m.id}">表示</button><button class="btn btn-d m-del" data-id="${m.id}">削除</button></div>`).join(''):'<p class="text-xs">保存済み教材はありません。</p>';}
+$('#mSavedList').onclick=e=>{const b=e.target.closest('button');if(!b)return;const m=DB.materials.find(x=>x.id===b.dataset.id);if(!m)return;
+if(b.classList.contains('m-del'))ask('削除しますか？',()=>{DB.materials=DB.materials.filter(x=>x.id!==m.id);save();renderMaterial();});
+else{lastMaterial=m.content;$('#mUnit').value=m.title;$('#mPreview').innerHTML=m.content;toast('読み込みました');}};
+
+/* ===== 観察記録 ===== */
+$$('.tab-btn').forEach(b=>b.onclick=()=>{$$('.tab-btn').forEach(x=>x.classList.toggle('btn-p',x===b));['text','voice','cam','file'].forEach(t=>$('#tab-'+t).classList.toggle('hidden',t!==b.dataset.tab));});
+$('#oVoiceBtn').onclick=()=>{const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){toast('このブラウザは音声入力に非対応です');return;}
+if(rec){rec.stop();return;}rec=new SR();rec.lang='ja-JP';$('#oVoiceBtn').textContent='⏹ 停止';
+rec.onresult=e=>{for(const r of e.results)$('#oText').value+=r[0].transcript+'\n';};
+rec.onend=()=>{rec=null;$('#oVoiceBtn').textContent='🎤 タップして音声入力開始';};
+try{rec.start();}catch(e){toast('音声入力を開始できませんでした');rec=null;}};
+$('#oCamBtn').onclick=async()=>{if(!navigator.mediaDevices){toast('カメラを利用できません（HTTPS/localhost推奨）');return;}
+try{stream=await navigator.mediaDevices.getUserMedia({video:true});$('#camVideo').srcObject=stream;$('#camWrap').classList.remove('hidden');}catch(e){toast('カメラ許可が必要です。ファイルタブもご利用ください。');}};
+$('#camStop').onclick=()=>{stopMedia();$('#camWrap').classList.add('hidden');};
+$('#camSnap').onclick=()=>{if(!stream)return;const v=$('#camVideo'),c=document.createElement('canvas');c.width=320;c.height=240;c.getContext('2d').drawImage(v,0,0,320,240);camShot=c.toDataURL('image/jpeg',0.5);$('#camShot').src=camShot;$('#camShotWrap').classList.remove('hidden');};
+const dz=$('#oDrop');dz.onclick=()=>$('#oFile').click();
+dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('ring');});
+dz.addEventListener('dragleave',()=>dz.classList.remove('ring'));
+dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('ring');const f=e.dataTransfer.files[0];if(f)$('#oFileName').textContent='選択中：'+f.name;});
+$('#oFile').onchange=e=>{$('#oFileName').textContent=e.target.files[0]?'選択中：'+e.target.files[0].name:'';};
+$('#oGenBtn').onclick=()=>{const n=sName($('#oStudent').value),t=$('#oText').value.trim();
+$('#oEval').value=`${n}さんは、${$('#oType').value}において、${t?`「${t.slice(0,60)}」と見られるように、`:''}自分なりに考え、取り組む姿が見られた。今後も小さな伸びを具体的に認め、自己肯定感につながる声かけを継続していきたい。`;toast('評価文案を作成しました');};
+$('#oSaveBtn').onclick=()=>{const sid=$('#oStudent').value;if(!sid){toast('児童生徒を登録してください');return;}
+DB.observations.push({id:uid(),studentId:sid,type:$('#oType').value,axis:$('#oAxis').value,date:$('#oDate').value||todayStr(),text:$('#oText').value,evalText:$('#oEval').value,media:camShot,fileName:$('#oFileName').textContent});
+save();camShot=null;$('#oText').value='';$('#oEval').value='';$('#oFileName').textContent='';clearDraft('oText');renderObserve();toast('記録を保存しました');};
+$('#oCopy').onclick=()=>copyText($('#oEval').value);
+$('#oClear').onclick=()=>{$('#oEval').value='';$('#oText').value='';clearDraft('oText');};
+$('#oSort').onchange=renderObserve;
+function renderObserve(){let list=[...DB.observations];const mode=$('#oSort').value;
+if(mode==='old')list.sort((a,b)=>a.date.localeCompare(b.date));
+else if(mode==='name')list.sort((a,b)=>sName(a.studentId).localeCompare(sName(b.studentId),'ja'));
+else list.sort((a,b)=>b.date.localeCompare(a.date));
+$('#oList').innerHTML=list.length?list.map(o=>`<div class="border rounded p-2 text-xs"><div class="flex justify-between">${o.date} <b>${esc(sName(o.studentId))}</b> <span class="chip">${esc(o.type)}</span>${o.axis?`<span class="chip">${esc(o.axis)}</span>`:''}<button class="btn btn-d o-del" data-id="${o.id}">削除</button></div><p>${esc(o.text||'')}</p>${(/^data:image\/(png|jpeg)/.test(o.media||''))?`<img src="${o.media}" class="w-24 rounded">`:''}${o.evalText?`<p class="text-fuchsia-700">【評価】${esc(o.evalText)}</p>`:''}</div>`).join(''):'<p class="text-xs">記録がありません。</p>';}
+$('#oList').onclick=e=>{const b=e.target.closest('.o-del');if(!b)return;ask('削除しますか？',()=>{DB.observations=DB.observations.filter(x=>x.id!==b.dataset.id);save();renderObserve();});};
+
+/* ===== 通知表（学期別保存含む） ===== */
+$('#rGenBtn').onclick=()=>{const st=filteredStudents();if(!st.length){toast('児童生徒を登録してください');return;}
+$('#rOut').innerHTML=st.map(s=>{const obs=DB.observations.filter(o=>o.studentId===s.id).length;
+const txt=`${$('#rTerm').value}：${pick(['落ち着いて取り組み、理解が着実に深まっています。','友達と協力しながら、意欲的に活動に取り組んでいます。','自分の考えをしっかり持ち、表現する力が増してきました。'])} ${pick(['今後は、振り返りを大切にしましょう。','得意な場面でリーダーシップを発揮できるよう期待しています。','基礎の定着に向け、家庭学習との連携を図っていきます。'])}${$('#rYear').checked?` 年間を通じて出席率${attendanceRate(s.id)}%を保ち、集団の中で役割を果たす姿が育ちました。`:''}（観察記録${obs}件参照）`;
+return `<div class="border rounded p-2"><b class="text-xs">${esc(s.name)}</b><textarea class="inp r-item" data-id="${s.id}" rows="3">${esc(txt)}</textarea></div>`;}).join('');toast('作成しました');};
+$('#rSaveBtn').onclick=()=>{const it=$$('.r-item');if(!it.length){toast('先に作成してください');return;}
+DB.reportSaves=DB.reportSaves||[];DB.reportSaves.push({id:uid(),term:$('#rTerm').value,year:DB.settings.year,date:todayStr(),items:it.map(t=>({studentId:t.dataset.id,text:t.value}))});
+save();renderReportSaves();toast('学期コメントを保存しました');};
+$('#rPdfBtn').onclick=()=>{const it=$$('.r-item');if(!it.length){toast('先に作成してください');return;}printDoc('通知表コメント '+$('#rTerm').value,it.map(t=>`<h2>${esc(sName(t.dataset.id))}</h2><pre>${esc(t.value)}</pre>`).join(''));};
+function renderReportSaves(){$('#rSaved').innerHTML=(DB.reportSaves||[]).length?DB.reportSaves.map(r=>`<div class="text-xs border-b py-1 flex gap-2 items-center"><span class="flex-1">${r.date} ${esc(r.year)}年度 ${esc(r.term)}（${r.items.length}名）</span><button class="btn r-load" data-id="${r.id}">表示</button><button class="btn r-pdf" data-id="${r.id}">PDF</button><button class="btn btn-d r-del" data-id="${r.id}">削除</button></div>`).join(''):'<p class="text-xs">なし</p>';}
+$('#rSaved').onclick=e=>{const b=e.target.closest('button');if(!b)return;const r=(DB.reportSaves||[]).find(x=>x.id===b.dataset.id);if(!r)return;
+if(b.classList.contains('r-del')){ask('削除しますか？',()=>{DB.reportSaves=DB.reportSaves.filter(x=>x.id!==r.id);save();renderReportSaves();});}
+else if(b.classList.contains('r-pdf')){printDoc('通知表コメント '+r.term,r.items.map(it=>`<h2>${esc(sName(it.studentId))}</h2><pre>${esc(it.text)}</pre>`).join(''));}
+else{$('#rOut').innerHTML=r.items.map(it=>`<div class="border rounded p-2"><b class="text-xs">${esc(sName(it.studentId))}</b><textarea class="inp r-item" data-id="${it.studentId}" rows="3">${esc(it.text)}</textarea></div>`).join('');toast('保存版を読み込みました');}};
+
+/* ===== 指導要録 ===== */
+let gCurrent=null;
+$('#gGenBtn').onclick=()=>{const sid=$('#gStudent').value;if(!sid){toast('児童生徒を選択してください');return;}const s=DB.students.find(x=>x.id===sid);
+$('#gLearn').value=`各教科において、${s.name}さんなりに着実に取り組んでいる。特に興味・関心をもつ分野では、進んで課題を探求する姿が見られる。`;
+$('#gBehavior').value=`出席率は${attendanceRate(sid)}%。生活面ではルールを守り、友達と穏やかに関わる姿が見られる。`;
+const du=DB.duties.roles.filter(r=>r.members.includes(sid)).map(r=>r.name);
+$('#gActivities').value=du.length?`${du.join('、')}として、集団のために活動した。`:'係活動等において、与えられた役割を果たした。';
+$('#gSummary').value=`観察記録${DB.observations.filter(o=>o.studentId===sid).length}件を踏まえると、一年間で確かな成長が見られた。今後は、自分の考えを自信をもって表現する力を伸ばしてほしい。`;
+gCurrent=sid;renderGuidancePreview();};
+function renderGuidancePreview(){if(!gCurrent)return;$('#gPreview').innerHTML=`<h2 class="font-bold">指導要録（${esc($('#gYear').value)}年度）</h2><p><b>${esc(sName(gCurrent))}</b></p><h3 class="font-bold">学習状況</h3><p>${esc($('#gLearn').value)}</p><h3 class="font-bold">行動・出席</h3><p>${esc($('#gBehavior').value)}</p><h3 class="font-bold">特別活動</h3><p>${esc($('#gActivities').value)}</p><h3 class="font-bold">総合所見</h3><p>${esc($('#gSummary').value)}</p>`;}
+['gLearn','gBehavior','gActivities','gSummary'].forEach(id=>$('#'+id).addEventListener('input',renderGuidancePreview));
+$('#gSaveBtn').onclick=()=>{if(!gCurrent){toast('先に生成してください');return;}DB.guidance=DB.guidance.filter(g=>!(g.studentId===gCurrent&&g.year===$('#gYear').value));
+DB.guidance.push({id:uid(),studentId:gCurrent,year:$('#gYear').value,learn:$('#gLearn').value,behavior:$('#gBehavior').value,activities:$('#gActivities').value,summary:$('#gSummary').value});save();renderGuidance();toast('保存しました');};
+$('#gPdfBtn').onclick=()=>{if(gCurrent)printDoc('指導要録 '+sName(gCurrent),$('#gPreview').innerHTML);};
+function renderGuidance(){$('#gSavedList').innerHTML=DB.guidance.length?DB.guidance.map(g=>`<div class="text-xs border-b py-1 flex gap-2"><span class="flex-1">${g.year}年度 ${esc(sName(g.studentId))}</span><button class="btn g-load" data-id="${g.id}">表示</button><button class="btn btn-d g-del" data-id="${g.id}">削除</button></div>`).join(''):'<p class="text-xs">なし</p>';}
+$('#gSavedList').onclick=e=>{const b=e.target.closest('button');if(!b)return;const g=DB.guidance.find(x=>x.id===b.dataset.id);if(!g)return;
+if(b.classList.contains('g-del'))ask('削除しますか？',()=>{DB.guidance=DB.guidance.filter(x=>x.id!==g.id);save();renderGuidance();});
+else{gCurrent=g.studentId;$('#gStudent').value=g.studentId;$('#gYear').value=g.year;$('#gLearn').value=g.learn;$('#gBehavior').value=g.behavior;$('#gActivities').value=g.activities;$('#gSummary').value=g.summary;renderGuidancePreview();}};
+
+/* ===== 成績 ===== */
+$('#tRegBtn').onclick=()=>{if(!$('#tName').value.trim()){toast('テスト名を入力してください');return;}
+DB.tests.push({id:uid(),name:$('#tName').value,subject:$('#tSubject').value,max:Math.min(Math.max(+$('#tMax').value||100,1),1000),date:$('#tDate').value,scores:{}});save();renderGrades();toast('登録しました');};
+$('#tSelect').onchange=renderScores;
+$('#tCsv').onclick=()=>{const t=DB.tests.find(x=>x.id===$('#tSelect').value);if(!t){toast('テストを選択してください');return;}
+const rows=[['氏名','点数']];filteredStudents().forEach(s=>rows.push([s.name,t.scores[s.id]??'']));download(toCSV(rows),`成績_${t.name}.csv`,'text/csv');};
+function renderScores(){const t=DB.tests.find(x=>x.id===$('#tSelect').value);
+if(!t){$('#scoreWrap').innerHTML='テストを選択すると入力欄が表示されます。';$('#histChart').innerHTML='';$('#scoreChart').innerHTML='';$('#statSum').innerHTML='';return;}
+$('#scoreWrap').innerHTML=filteredStudents().map(s=>`<div class="flex items-center gap-2 text-xs"><span class="w-24">${esc(s.name)}</span><input type="number" min="0" max="${t.max}" class="inp !w-20 score-inp" data-id="${s.id}" value="${t.scores[s.id]??''}"><span class="text-[10px]">/ ${t.max}</span></div>`).join('')||'<p class="text-xs">生徒がいません</p>';
+drawCharts(t);}
+$('#scoreWrap').addEventListener('input',e=>{const t=DB.tests.find(x=>x.id===$('#tSelect').value);if(!t||!e.target.dataset.id)return;let v=e.target.value;
+if(v!==''){v=Math.min(Math.max(+v||0,0),t.max);e.target.value=v;}t.scores[e.target.dataset.id]=v===''?undefined:v;save();drawCharts(t);});
+function drawCharts(t){const vals=filteredStudents().map(s=>t.scores[s.id]).filter(v=>v!=null);
+const bk=Array(10).fill(0);vals.forEach(v=>bk[Math.min(9,Math.floor(v/t.max*10))]++);const mx=Math.max(...bk,1);
+$('#histChart').innerHTML=bk.map((b,i)=>`<div class="flex items-center gap-1 text-[10px]"><span class="w-14">${i*10}-${i*10+9}</span><div class="bar" style="width:${b/mx*100}%"></div><span>${b}</span></div>`).join('');
+$('#scoreChart').innerHTML=filteredStudents().map(s=>{const v=t.scores[s.id];return `<div class="flex items-center gap-1 text-[10px]"><span class="w-20 truncate">${esc(s.name)}</span><div class="bar bar-alt" style="width:${v!=null?v/t.max*100:0}%"></div><span>${v??'-'}</span></div>`;}).join('');
+if(vals.length){const avg=vals.reduce((a,b)=>a+b,0)/vals.length;const sd=Math.sqrt(vals.reduce((a,b)=>a+(b-avg)**2,0)/vals.length);
+$('#statSum').innerHTML=`<table class="tbl"><tr><th>受験数</th><td>${vals.length}</td></tr><tr><th>平均</th><td>${avg.toFixed(1)}</td></tr><tr><th>最高</th><td>${Math.max(...vals)}</td></tr><tr><th>最低</th><td>${Math.min(...vals)}</td></tr><tr><th>標準偏差</th><td>${sd.toFixed(1)}</td></tr></table>`;}else $('#statSum').innerHTML='—';}
+function renderGrades(){$('#tList').innerHTML=DB.tests.length?DB.tests.map(t=>`<div class="text-xs border-b py-1 flex gap-2"><span class="flex-1">${t.date} 【${esc(t.subject)}】${esc(t.name)}</span><button class="btn btn-d t-del" data-id="${t.id}">削除</button></div>`).join(''):'<p class="text-xs">なし</p>';
+const v=$('#tSelect').value;$('#tSelect').innerHTML='<option value="">テストを選択</option>'+DB.tests.map(t=>`<option value="${t.id}">${esc(t.name)}</option>`).join('');$('#tSelect').value=v;renderScores();}
+$('#tList').onclick=e=>{const b=e.target.closest('.t-del');if(!b)return;ask('削除しますか？',()=>{DB.tests=DB.tests.filter(x=>x.id!==b.dataset.id);save();renderGrades();});};
+
+/* ===== IEP ===== */
+$('#iSaveBtn').onclick=()=>{const sid=$('#iStudent').value;if(!sid){toast('児童生徒を選択してください');return;}
+const r={id:uid(),studentId:sid,area:$('#iArea').value,date:$('#iDate').value||todayStr(),current:$('#iCurrent').value,long:$('#iLong').value,short:$('#iShort').value,support:$('#iSupport').value,review:$('#iReview').value};
+DB.ieps.push(r);save();renderIep();showIep(r);toast('保存しました');};
+function showIep(r){$('#iPreview').innerHTML=`<h2 class="font-bold">個別指導計画（IEP）</h2><p><b>${esc(sName(r.studentId))}</b>（${r.date}）対象：${esc(r.area)}</p><h3 class="font-bold">現状</h3><p>${esc(r.current)}</p><h3 class="font-bold">長期目標</h3><p>${esc(r.long)}</p><h3 class="font-bold">短期目標</h3><p>${esc(r.short)}</p><h3 class="font-bold">支援・手立て</h3><p>${esc(r.support)}</p><h3 class="font-bold">評価・見直し</h3><p>${esc(r.review)}</p>`;}
+$('#iPdfBtn').onclick=()=>printDoc('IEP '+sName($('#iStudent').value),$('#iPreview').innerHTML);
+function renderIep(){$('#iList').innerHTML=DB.ieps.length?DB.ieps.map(r=>`<div class="text-xs border-b py-1 flex gap-2"><span class="flex-1">${r.date} ${esc(sName(r.studentId))}</span><button class="btn i-load" data-id="${r.id}">表示</button><button class="btn btn-d i-del" data-id="${r.id}">削除</button></div>`).join(''):'<p class="text-xs">なし</p>';}
+$('#iList').onclick=e=>{const b=e.target.closest('button');if(!b)return;const r=DB.ieps.find(x=>x.id===b.dataset.id);if(!r)return;
+if(b.classList.contains('i-del'))ask('削除しますか？',()=>{DB.ieps=DB.ieps.filter(x=>x.id!==r.id);save();renderIep();});else showIep(r);};
+
+/* ===== 時間割 ===== */
+const DAYS=['月','火','水','木','金','土'],PERIODS=['1限','2限','3限','4限','5限','6限'];
+function renderTimetable(){let h='<table class="tbl"><tr><th>時限</th>'+DAYS.map(d=>`<th>${d}</th>`).join('')+'</tr>';
+PERIODS.forEach(p=>{h+='<tr><th>'+p+'</th>'+DAYS.map(d=>{const c=DB.timetable[d+'-'+p];return `<td class="tt-cell cursor-pointer hover:bg-purple-50" data-key="${d}-${p}">${c?`<b>${esc(c.subject)}</b><br><span class="text-[10px]">${esc(c.room)}</span>`:'＋'}</td>`;}).join('')+'</tr>';});
+$('#ttTable').innerHTML=h+'</table>';
+const tom=new Date();tom.setDate(tom.getDate()+1);const dn=['日','月','火','水','木','金','土'][tom.getDay()];
+const ls=PERIODS.map(p=>DB.timetable[dn+'-'+p]).filter(Boolean);
+$('#prepTomorrow').innerHTML=dn==='日'?'<p class="text-xs">（明日は日曜です）</p>':(ls.length?ls.map(l=>`<p class="text-xs">・${esc(l.subject)} ${esc(l.room)}</p>`).join(''):'<p class="text-xs">明日の授業は登録されていません。</p>');
+if(DB.prep.date!==todayStr())DB.prep={date:todayStr(),checks:{}};
+const items=['教科書・指導案の確認','プリント・教材の印刷','掲示物・教具の準備','机配置の確認','ICT機器の動作確認','連絡事項の確認'];
+$('#prepChecks').innerHTML=items.map((it,i)=>`<label class="block text-xs py-1"><input type="checkbox" class="prep-chk" data-i="${i}" ${DB.prep.checks[i]?'checked':''}> ${it}</label>`).join('');
+$('#prepMemo').value=DB.prepMemo;}
+$('#prepChecks').addEventListener('change',e=>{DB.prep.checks[e.target.dataset.i]=e.target.checked;save();});
+$('#prepMemoSave').onclick=()=>{DB.prepMemo=$('#prepMemo').value;save();toast('保存しました');};
+$('#ttTable').onclick=e=>{const c=e.target.closest('.tt-cell');if(!c)return;const[d,p]=c.dataset.key.split('-');$('#ttDay').value=d;$('#ttPeriod').value=p;const v=DB.timetable[c.dataset.key]||{};$('#ttSubject').value=v.subject||'';$('#ttRoom').value=v.room||'';$('#ttModal').classList.remove('hidden');};
+$('#ttAdd').onclick=()=>{$('#ttSubject').value='';$('#ttRoom').value='';$('#ttModal').classList.remove('hidden');};
+$('#ttSave').onclick=()=>{if(!$('#ttSubject').value.trim()){toast('教科を入力してください');return;}DB.timetable[$('#ttDay').value+'-'+$('#ttPeriod').value]={subject:$('#ttSubject').value,room:$('#ttRoom').value};save();$('#ttModal').classList.add('hidden');renderTimetable();};
+$('#ttDelete').onclick=()=>{delete DB.timetable[$('#ttDay').value+'-'+$('#ttPeriod').value];save();$('#ttModal').classList.add('hidden');renderTimetable();};
+$('#ttCancel').onclick=()=>$('#ttModal').classList.add('hidden');
+$('#ttReset').onclick=()=>ask('時間割をリセットしますか？',()=>{DB.timetable={};save();renderTimetable();});
+
+/* ===== 保護者連絡 ===== */
+$('#cGenBtn').onclick=()=>{const n=sName($('#cStudent').value),tone=$('#cTone').value,ex=$('#cExtra').value,scene=$('#cScene').value;
+const open=tone==='やわらかい'?'いつもお子さまの様子をお知らせいただき、ありがとうございます。':tone==='心配・共感'?'このたびはご心配をおかけしております。':'いつも教育活動へのご理解・ご協力をいただき、ありがとうございます。';
+const body={'欠席連絡（安否確認）':`本日${n}さんがお休みですが、ご連絡が取れておりません。ご都合がよろしければ、ご一報いただけますと幸いです。`,'忘れ物・持ち物の確認':`${n}さんの持ち物について確認させていただきたくご連絡いたしました。${ex||'明日の持ち物について、ご家庭でもご確認いただけますと幸いです。'}`,'よい出来事の報告':`本日、${n}さんの素晴らしい姿がありましたのでご連絡いたしました。${ex||'クラスの皆の前で発表し、大きな拍手を受けました。'}`,'体調の心配・共感':`${n}さんの体調について伺い、心配しております。${ex||'無理をなさらず、ゆっくり休養いただけますようお願いいたします。'}`,'規律に関するお願い':`${n}さんの学校での様子について、ご相談させていただきたくご連絡いたしました。${ex||'ご家庭でもお話し合っていただけますと幸いです。'}`,'行事・日程のお知らせ':`今後の行事予定につきましてご案内申し上げます。${ex||'詳細は別途おたよりをご確認ください。'}`}[scene];
+$('#cOut').value=`【${scene}】\n${n}さん 保護者様\n\n${open}\n${body}\n\n${tone==='やや厳しい'?'ご家庭でのご指導・ご協力をよろしくお願いいたします。':'引き続き、ご理解とご協力をよろしくお願いいたします。'}\n${DB.settings.school||''} ${DB.settings.teacher||''}`;toast('生成しました');};
+$('#cCopy').onclick=()=>copyText($('#cOut').value);
+$('#cClear').onclick=()=>{$('#cOut').value='';clearDraft('cOut');};
+$('#cSave').onclick=()=>{if(!$('#cOut').value){toast('文面がありません');return;}DB.contacts.push({id:uid(),scene:$('#cScene').value,student:$('#cStudent').value,text:$('#cOut').value,date:todayStr()});save();clearDraft('cOut');renderContact();toast('保存しました');};
+function renderContact(){$('#cList').innerHTML=DB.contacts.length?DB.contacts.map(c=>`<div class="text-xs border-b py-1 flex gap-2">${c.date} ${esc(c.scene)}（${esc(sName(c.student))}）<button class="btn c-load ml-auto" data-id="${c.id}">表示</button><button class="btn btn-d c-del" data-id="${c.id}">削除</button></div>`).join(''):'<p class="text-xs">なし</p>';}
+$('#cList').onclick=e=>{const b=e.target.closest('button');if(!b)return;const c=DB.contacts.find(x=>x.id===b.dataset.id);if(!c)return;
+if(b.classList.contains('c-del'))ask('削除しますか？',()=>{DB.contacts=DB.contacts.filter(x=>x.id!==c.id);save();renderContact();});else $('#cOut').value=c.text;};
+
+/* ===== 提出物 ===== */
+$('#sRegBtn').onclick=()=>{if(!$('#sContent').value.trim()){toast('内容を入力してください');return;}
+DB.submissions.push({id:uid(),type:$('#sType').value,content:$('#sContent').value,due:$('#sDue').value||todayStr(),target:$('#sTarget').value,status:{}});save();renderSubmit();toast('登録しました');};
+$('#sSelect').onchange=renderChecklist;
+function renderChecklist(){const s=DB.submissions.find(x=>x.id===$('#sSelect').value);
+$('#sChecklist').innerHTML=s?((submitStudents(s).map(x=>`<div class="flex items-center gap-2 text-xs"><span class="flex-1">${esc(x.name)}</span><button class="btn s-chk ${s.status[x.id]?'btn-p':''}" data-id="${x.id}">${s.status[x.id]?'提出済':'未提出'}</button></div>`).join(''))||'<p class="text-xs">対象生徒がいません</p>'):'<p class="text-xs">提出物を選択してください</p>';}
+$('#sChecklist').onclick=e=>{const b=e.target.closest('.s-chk');if(!b)return;const s=DB.submissions.find(x=>x.id===$('#sSelect').value);s.status[b.dataset.id]=!s.status[b.dataset.id];save();renderChecklist();};
+$('#sBulkSub').onclick=()=>{const s=DB.submissions.find(x=>x.id===$('#sSelect').value);if(!s){toast('提出物を選択してください');return;}submitStudents(s).forEach(x=>s.status[x.id]=true);save();renderChecklist();};
+$('#sBulkUn').onclick=()=>{const s=DB.submissions.find(x=>x.id===$('#sSelect').value);if(!s){toast('提出物を選択してください');return;}submitStudents(s).forEach(x=>s.status[x.id]=false);save();renderChecklist();};
+function renderSubmit(){$('#sList').innerHTML=DB.submissions.length?DB.submissions.map(s=>`<div class="text-xs border-b py-1 flex gap-2 items-center"><span class="flex-1">${esc(s.content)}</span><span class="chip">${dueLabel(s.due)}</span><button class="btn btn-d s-del" data-id="${s.id}">削除</button></div>`).join(''):'<p class="text-xs">なし</p>';
+const v=$('#sSelect').value;$('#sSelect').innerHTML='<option value="">提出物を選択</option>'+DB.submissions.map(s=>`<option value="${s.id}">${esc(s.content)}（${s.due}）</option>`).join('');$('#sSelect').value=v;renderChecklist();}
+$('#sList').onclick=e=>{const b=e.target.closest('.s-del');if(!b)return;ask('削除しますか？',()=>{DB.submissions=DB.submissions.filter(x=>x.id!==b.dataset.id);save();renderSubmit();});};
+
+/* ===== 学級通信 ===== */
+$('#lAiBtn').onclick=()=>{const kw=$('#lKeywords').value.trim().split(/[\n,、]/).filter(Boolean);
+$('#lBody').value=($('#lBody').value?$('#lBody').value+'\n\n':'')+(kw.length?kw.map(k=>`${k}。子どもたちの姿から、日々の成長を感じます。`).join('\n'):'今週も、子どもたちはそれぞれの場面で頑張る姿を見せてくれました。');toast('文章化しました');};
+$('#lApplyBtn').onclick=()=>{const t=$('#lTemplate').value;if(!t){toast('テンプレートを選択してください');return;}
+const head={'季節の便り':'新緑の風が心地よい季節となりました。','学習のふりかえり':'これまでの学習を振り返ります。','行事のお知らせ':'今後の行事についてお知らせいたします。','今週のまとめ':'今週のようすをお伝えします。'}[t];
+$('#lBody').value=`${$('#lTitle').value||'学級通信'}\n${$('#lDate').value}\n\n${head}\n\n${$('#lBody').value}`;toast('テンプレートを適用しました');};
+$('#lCopy').onclick=()=>copyText($('#lBody').value);
+$('#lSave').onclick=()=>{if(!$('#lBody').value){toast('内容がありません');return;}DB.letters.push({id:uid(),title:$('#lTitle').value||'学級通信',date:$('#lDate').value||todayStr(),body:$('#lBody').value});save();clearDraft('lBody');renderLetter();toast('保存しました');};
+$('#lPdf').onclick=()=>printDoc($('#lTitle').value||'学級通信',`<pre>${esc($('#lBody').value)}</pre>`);
+function renderLetter(){$('#lList').innerHTML=DB.letters.length?DB.letters.map(l=>`<div class="text-xs border-b py-1 flex gap-2"><span class="flex-1">${l.date} ${esc(l.title)}</span><button class="btn l-load" data-id="${l.id}">表示</button><button class="btn btn-d l-del" data-id="${l.id}">削除</button></div>`).join(''):'<p class="text-xs">なし</p>';}
+$('#lList').onclick=e=>{const b=e.target.closest('button');if(!b)return;const l=DB.letters.find(x=>x.id===b.dataset.id);if(!l)return;
+if(b.classList.contains('l-del'))ask('削除しますか？',()=>{DB.letters=DB.letters.filter(x=>x.id!==l.id);save();renderLetter();});
+else{$('#lBody').value=l.body;$('#lTitle').value=l.title;$('#lDate').value=l.date;}};
+
+/* ===== 児童生徒 ===== */
+let stEdit=null;
+$('#stRegBtn').onclick=()=>{const n=$('#stName').value.trim();if(!n){toast('氏名を入力してください');return;}
+if(stEdit){Object.assign(DB.students.find(x=>x.id===stEdit),{name:n,grade:$('#stGrade').value,klass:$('#stClass').value,note:$('#stNote').value,bday:$('#stBday').value});toast('更新しました');}
+else{DB.students.push({id:uid(),name:n,grade:$('#stGrade').value,klass:$('#stClass').value,note:$('#stNote').value,bday:$('#stBday').value});toast('登録しました');}
+save();stEdit=null;$('#stCancelBtn').classList.add('hidden');$('#stName').value='';$('#stNote').value='';$('#stBday').value='';refreshStudentSelects();renderStudents();};
+$('#stCancelBtn').onclick=()=>{stEdit=null;$('#stCancelBtn').classList.add('hidden');$('#stName').value='';$('#stNote').value='';$('#stBday').value='';};
+$('#stPdf').onclick=()=>{const st=filteredStudents();if(!st.length){toast('生徒がいません');return;}
+printDoc('児童生徒名簿',`<table><tr><th>氏名</th><th>学年・組</th><th>特記事項</th></tr>${st.map(s=>`<tr><td>${esc(s.name)}</td><td>${s.grade}年${s.klass}</td><td>${esc(s.note||'')}</td></tr>`).join('')}</table>`);};
+function renderStudents(){$('#stList').innerHTML=filteredStudents().length?filteredStudents().map(s=>{const bi=bdayInfo(s);
+return `<div class="text-xs border-b py-1 flex items-center gap-2"><span class="w-28">${esc(s.name)}</span><span class="chip">${s.grade} ${s.klass}</span>${bi?`<span class="chip">🎂${bi.md}</span>`:''}<span class="text-[10px] text-slate-500 flex-1">${esc(s.note||'')}</span><button class="btn st-edit" data-id="${s.id}">編集</button><button class="btn btn-d st-del" data-id="${s.id}">削除</button></div>`;}).join(''):'<p class="text-xs">未登録</p>';}
+$('#stList').onclick=e=>{const b=e.target.closest('button');if(!b)return;const s=DB.students.find(x=>x.id===b.dataset.id);if(!s)return;
+if(b.classList.contains('st-del'))ask(s.name+'さんを削除しますか？',()=>{DB.students=DB.students.filter(x=>x.id!==s.id);save();refreshStudentSelects();renderStudents();});
+else{stEdit=s.id;$('#stName').value=s.name;$('#stGrade').value=s.grade;$('#stClass').value=s.klass;$('#stNote').value=s.note||'';$('#stBday').value=s.bday||'';$('#stCancelBtn').classList.remove('hidden');}};
+
+/* ===== 出席簿 ===== */
+$('#aDate').addEventListener('change',renderAttendance);
+$('#aAllPresent').onclick=()=>{const d=$('#aDate').value;if(!d)return;DB.attendance[d]=DB.attendance[d]||{};filteredStudents().forEach(s=>DB.attendance[d][s.id]='出席');save();renderAttendance();toast('全員を出席にしました');};
+$('#aCsv').onclick=()=>{const m=$('#aMonth').value;if(!m)return;const rows=[['氏名','出席','欠席','遅刻','早退']];
+filteredStudents().forEach(s=>{const c={出席:0,欠席:0,遅刻:0,早退:0};for(const d in DB.attendance){if(d.startsWith(m)){const v=DB.attendance[d][s.id];if(v)c[v]++;}}rows.push([s.name,c.出席,c.欠席,c.遅刻,c.早退]);});
+download(toCSV(rows),`出席集計_${m}.csv`,'text/csv');toast('CSVを出力しました');};
+function renderAttendance(){const d=$('#aDate').value;if(!d)return;DB.attendance[d]=DB.attendance[d]||{};
+$('#aList').innerHTML=filteredStudents().map(s=>`<div class="flex items-center gap-1 text-xs"><span class="w-24">${esc(s.name)}</span>${['出席','欠席','遅刻','早退'].map(v=>`<button class="btn a-btn ${DB.attendance[d][s.id]===v?'btn-p':''}" data-id="${s.id}" data-v="${v}">${v}</button>`).join('')}</div>`).join('')||'<p class="text-xs">生徒を登録してください</p>';renderMonth();}
+$('#aList').onclick=e=>{const b=e.target.closest('.a-btn');if(!b)return;DB.attendance[$('#aDate').value][b.dataset.id]=b.dataset.v;save();renderAttendance();};
+$('#aMonth').addEventListener('change',renderMonth);
+function renderMonth(){const m=$('#aMonth').value;if(!m)return;
+const rows=filteredStudents().map(s=>{const c={出席:0,欠席:0,遅刻:0,早退:0};for(const d in DB.attendance){if(d.startsWith(m)){const v=DB.attendance[d][s.id];if(v)c[v]++;}}return `<tr><td>${esc(s.name)}</td><td>${c.出席}</td><td>${c.欠席}</td><td>${c.遅刻}</td><td>${c.早退}</td></tr>`;});
+$('#aSummary').innerHTML=rows.length?`<table class="tbl"><tr><th>氏名</th><th>出席</th><th>欠席</th><th>遅刻</th><th>早退</th></tr>${rows.join('')}</table>`:'—';}
+$('#aPdf').onclick=()=>{const d=$('#aDate').value;printDoc('出席簿 '+d,`<table><tr><th>氏名</th><th>状態</th></tr>${filteredStudents().map(s=>`<tr><td>${esc(s.name)}</td><td>${(DB.attendance[d]||{})[s.id]||'—'}</td></tr>`).join('')}</table>`);};
+
+/* ===== 係・掃除・席替え ===== */
+const ROLE_NAMES=['学級委員','保健委員','給食委員','図書委員','環境委員','体育委員','放送委員','掲示委員'];
+const CLEAN_AREAS=['教室','廊下','トイレ','階段','昇降口'];
+$('#duGenBtn').onclick=()=>{const st=filteredStudents();if(!st.length){toast('生徒を登録してください');return;}
+const sh=[...st].sort(()=>Math.random()-0.5);DB.duties.roles=ROLE_NAMES.map((n,i)=>({name:n,members:[sh[i%sh.length].id]}));
+const sh2=[...st].sort(()=>Math.random()-0.5);DB.duties.cleaning=CLEAN_AREAS.map((n,i)=>({name:n,members:[sh2[i%sh2.length].id,sh2[(i+1)%sh2.length].id]}));
+save();renderDuties();toast('自動生成しました');};
+$('#duRotate').onclick=()=>{const rot=a=>{if(a&&a.length)a.unshift(a.pop());};
+(DB.duties.roles||[]).forEach(r=>rot(r.members));(DB.duties.cleaning||[]).forEach(r=>rot(r.members));(DB.duties.custom||[]).forEach(r=>rot(r.members));
+save();renderDuties();toast('ローテーションしました');};
+$('#duCustomAdd').onclick=()=>{const n=$('#duCustomName').value.trim();if(!n)return;DB.duties.custom=DB.duties.custom||[];DB.duties.custom.push({name:n,members:[]});$('#duCustomName').value='';save();renderDuties();};
+let seatSel=null;
+function renderSeats(){const s=DB.seats;const edit=$('#seatEdit').checked;
+if(!s||!s.grid||!s.grid.length){$('#seatGrid').innerHTML='<p class="text-xs">未生成</p>';return;}
+$('#seatGrid').innerHTML='<table class="tbl mt-1">'+s.grid.map((r,ri)=>'<tr>'+r.map((id,ci)=>`<td class="${edit?'seat-cell':''} ${seatSel&&seatSel[0]===ri&&seatSel[1]===ci?'seat-sel':''}" data-rc="${ri},${ci}">${id?esc(sName(id)):'　'}</td>`).join('')+'</tr>').join('')+'</table><p class="text-[10px] text-slate-500 mt-1">生成日：${s.date} ／ ${s.cols}列（前方＝表の上側）${edit?' ／ 手動調整中：2マスクリックで入替':''}</p>';}
+$('#seatEdit').onchange=()=>{seatSel=null;renderSeats();};
+$('#seatGrid').onclick=e=>{if(!$('#seatEdit').checked)return;const c=e.target.closest('.seat-cell');if(!c)return;
+const[r,i]=c.dataset.rc.split(',').map(Number);const g=DB.seats.grid;
+if(!seatSel){seatSel=[r,i];renderSeats();return;}
+const tmp=g[seatSel[0]][seatSel[1]];g[seatSel[0]][seatSel[1]]=g[r][i];g[r][i]=tmp;seatSel=null;DB.seats.date=todayStr();save();renderSeats();toast('入替えました');};
+$('#seatGen').onclick=()=>{const st=filteredStudents();if(!st.length){toast('生徒を登録してください');return;}
+const cols=+$('#seatCols').value;const sh=[...st].sort(()=>Math.random()-0.5);const grid=[];
+for(let i=0;i<sh.length;i+=cols){const row=sh.slice(i,i+cols).map(s=>s.id);while(row.length<cols)row.push('');grid.push(row);}
+DB.seats={date:todayStr(),cols,grid};seatSel=null;save();renderSeats();toast('席順を生成しました');};
+$('#seatPdf').onclick=()=>{const s=DB.seats;if(!s||!s.grid||!s.grid.length){toast('先に席順を生成してください');return;}
+printDoc('座席表',`<p>${s.cols}列配置（前方＝上側）</p><table>${s.grid.map(r=>'<tr>'+r.map(id=>`<td style="height:34px">${id?esc(sName(id)):'　'}</td>`).join('')+'</tr>').join('')}</table>`);};
+function renderDuties(){const roles=DB.duties.roles||[],custom=DB.duties.custom||[];const all=[...roles,...custom];
+$('#duRoles').innerHTML=all.length?all.map((r,i)=>{const t=i<roles.length?'roles':'custom';const idx=t==='roles'?i:i-roles.length;
+return `<div class="text-xs border-b py-1"><b>${esc(r.name)}</b>：${r.members.map(m=>esc(sName(m))).join('、')||'—'} <button class="btn btn-d du-del" data-t="${t}" data-i="${idx}">削除</button></div>`;}).join(''):'<p class="text-xs">未生成</p>';
+$('#duClean').innerHTML=(DB.duties.cleaning||[]).length?DB.duties.cleaning.map(r=>`<div class="text-xs border-b py-1"><b>${esc(r.name)}</b>：${r.members.map(m=>esc(sName(m))).join('、')}</div>`).join(''):'<p class="text-xs">未生成</p>';
+renderSeats();}
+$('#duRoles').onclick=e=>{const b=e.target.closest('.du-del');if(!b)return;ask('削除しますか？',()=>{const arr=DB.duties[b.dataset.t]||[];arr.splice(+b.dataset.i,1);save();renderDuties();});};
+
+/* ===== 日誌・週案 ===== */
+$('#jAuto').onclick=()=>{const d=todayStr();const att=DB.attendance[d]||{};const st=filteredStudents();
+const abs=st.filter(s=>att[s.id]==='欠席').map(s=>s.name);const late=st.filter(s=>att[s.id]==='遅刻').length;
+const h=DB.heart[d]||{};const hc={};st.forEach(s=>{const v=h[s.id];if(v)hc[v]=(hc[v]||0)+1;});
+const due=DB.submissions.filter(x=>x.due===d).map(x=>x.content);
+let t=`出席：${st.length-abs.length}/${st.length}名`;if(abs.length)t+=`（欠席：${abs.join('、')}）`;if(late)t+=`、遅刻${late}名`;t+='。\n';
+t+='心の天気：'+(Object.entries(hc).map(([k,v])=>`${k}${v}`).join(' ')||'記録なし')+'。\n';
+t+=due.length?`本日期限：${due.join('、')}。`:'本日期限の提出物なし。';
+$('#jText').value=t;toast('日誌の下書きを作成しました');};
+$('#jSave').onclick=()=>{if(!$('#jText').value.trim()){toast('日誌を入力してください');return;}DB.journals.push({id:uid(),date:$('#jDate').value||todayStr(),text:$('#jText').value});save();$('#jText').value='';renderJournal();toast('保存しました');};
+$('#jWeekBtn').onclick=()=>{let h='<table class="tbl"><tr><th>曜日</th><th>授業</th><th>ねらい・ポイント</th></tr>';
+DAYS.forEach(d=>{h+=`<tr><td>${d}</td><td>${esc(PERIODS.map(p=>(DB.timetable[d+'-'+p]||{}).subject).filter(Boolean).join('、'))||'—'}</td><td>${esc(pick(['主体的な学びを引き出す声かけを意識する。','個別支援の時間を意識的につくる。','振り返りを共有し、次時につなげる。']))}</td></tr>`;});
+DB.weekly=h+'</table>';$('#jWeekPreview').innerHTML=DB.weekly;toast('週案を生成しました');};
+$('#jWeekPdf').onclick=()=>{if(DB.weekly)printDoc('週案',DB.weekly);else toast('先に週案を生成してください');};
+function renderJournal(){const tj=DB.journals.find(j=>j.date===todayStr());
+$('#jToday').innerHTML=tj?`<p class="text-xs border rounded p-2">${esc(tj.text)}</p>`:'<p class="text-xs">まだ入力されていません</p>';
+$('#jList').innerHTML=[...DB.journals].sort((a,b)=>b.date.localeCompare(a.date)).map(j=>`<div class="text-xs border-b py-1 flex gap-2"><span class="flex-1">${j.date} ${esc((j.text||'').slice(0,40))}</span><button class="btn btn-d j-del" data-id="${j.id}">削除</button></div>`).join('')||'<p class="text-xs">なし</p>';}
+$('#jList').onclick=e=>{const b=e.target.closest('.j-del');if(!b)return;ask('削除しますか？',()=>{DB.journals=DB.journals.filter(x=>x.id!==b.dataset.id);save();renderJournal();});};
+
+/* ===== イベント ===== */
+$('#eSave').onclick=()=>{if(!$('#eName').value.trim()){toast('イベント名を入力してください');return;}DB.events.push({id:uid(),name:$('#eName').value,date:$('#eDate').value||todayStr(),type:$('#eType').value,att:{}});save();renderEvent();toast('保存しました');};
+$('#eSelect').onchange=renderEventAttend;
+function renderEventAttend(){const ev=DB.events.find(x=>x.id===$('#eSelect').value);
+$('#eAttendList').innerHTML=ev?((filteredStudents().map(s=>`<div class="flex items-center gap-2 text-xs"><span class="flex-1">${esc(s.name)} 保護者</span><button class="btn e-att ${ev.att[s.id]?'btn-p':''}" data-id="${s.id}">${ev.att[s.id]?'出席':'欠席'}</button></div>`).join(''))||'<p class="text-xs">生徒がいません</p>'):'—';
+if(ev){const a=Object.values(ev.att).filter(Boolean).length;$('#eSummary').innerHTML=`<p class="text-xs">出席 ${a} / 登録 ${filteredStudents().length}</p>`;}}
+$('#eAttendList').onclick=e=>{const b=e.target.closest('.e-att');if(!b)return;const ev=DB.events.find(x=>x.id===$('#eSelect').value);ev.att[b.dataset.id]=!ev.att[b.dataset.id];save();renderEventAttend();};
+$('#ePdf').onclick=()=>{const ev=DB.events.find(x=>x.id===$('#eSelect').value);if(!ev){toast('イベントを選択してください');return;}
+printDoc(ev.name+' 出席状況',`<table><tr><th>氏名</th><th>出席</th></tr>${filteredStudents().map(s=>`<tr><td>${esc(s.name)}</td><td>${ev.att[s.id]?'出席':'欠席'}</td></tr>`).join('')}</table>`);};
+function renderEvent(){$('#eList').innerHTML=DB.events.length?[...DB.events].sort((a,b)=>a.date.localeCompare(b.date)).map(ev=>`<div class="text-xs border-b py-1 flex gap-2 items-center"><span class="flex-1">${ev.date} ${esc(ev.name)}（${ev.type}）</span><span class="chip">${dueLabel(ev.date)}</span><button class="btn btn-d e-del" data-id="${ev.id}">削除</button></div>`).join(''):'<p class="text-xs">なし</p>';
+const v=$('#eSelect').value;$('#eSelect').innerHTML='<option value="">イベントを選択</option>'+DB.events.map(ev=>`<option value="${ev.id}">${esc(ev.name)}</option>`).join('');$('#eSelect').value=v;renderEventAttend();}
+$('#eList').onclick=e=>{const b=e.target.closest('.e-del');if(!b)return;const ev=DB.events.find(x=>x.id===b.dataset.id);if(!ev)return;
+ask('削除しますか？',()=>{DB.events=DB.events.filter(x=>x.id!==ev.id);save();renderEvent();});};
+
+/* ===== 面談スケジュール ===== */
+$('#ivGen').onclick=()=>{const st=filteredStudents();if(!st.length){toast('生徒を登録してください');return;}
+const dur=+$('#ivDur').value;
+DB.interviews=DB.interviews||[];
+DB.interviews.push({id:uid(),date:$('#ivDate').value||todayStr(),start:$('#ivStart').value||'15:00',dur,slots:st.map(s=>({id:uid(),studentId:s.id,status:'予定',memo:''}))});
+save();renderInterview();toast('面談表を生成しました');};
+$('#ivSelect').onchange=renderInterview;
+$('#ivDel').onclick=()=>{const s=(DB.interviews||[]).find(x=>x.id===$('#ivSelect').value);if(!s){toast('セッションを選択してください');return;}
+ask('この面談セッションを削除しますか？',()=>{DB.interviews=DB.interviews.filter(x=>x.id!==s.id);save();renderInterview();});};
+function renderInterview(){DB.interviews=DB.interviews||[];
+const v=$('#ivSelect').value;
+$('#ivSelect').innerHTML='<option value="">セッションを選択</option>'+DB.interviews.map(x=>`<option value="${x.id}">${x.date} ${x.start}〜（${x.slots.length}枠）</option>`).join('');
+$('#ivSelect').value=v;
+const s=DB.interviews.find(x=>x.id===v);
+if(!s){$('#ivTable').innerHTML='<p class="text-xs">セッションがありません</p>';return;}
+$('#ivTable').innerHTML='<table class="tbl"><tr><th>時刻</th><th>生徒</th><th>状態</th><th>メモ</th></tr>'+s.slots.map((sl,i)=>`<tr><td>${addMin(s.start,s.dur*i)}</td><td><select class="inp iv-st" data-i="${i}">${DB.students.map(st=>`<option value="${st.id}" ${sl.studentId===st.id?'selected':''}>${esc(st.name)}</option>`).join('')}</select></td><td>${['予定','完了','取消'].map(st=>`<button class="btn iv-status ${sl.status===st?'btn-p':''}" data-i="${i}" data-v="${st}">${st}</button>`).join('')}</td><td><input class="inp iv-memo" data-i="${i}" value="${esc(sl.memo||'')}" placeholder="メモ"></td></tr>`).join('')+'</table>';}
+$('#ivTable').addEventListener('change',e=>{const s=(DB.interviews||[]).find(x=>x.id===$('#ivSelect').value);if(!s)return;
+if(e.target.classList.contains('iv-st')){s.slots[+e.target.dataset.i].studentId=e.target.value;save();}
+if(e.target.classList.contains('iv-memo')){s.slots[+e.target.dataset.i].memo=e.target.value;save();}});
+$('#ivTable').addEventListener('click',e=>{const b=e.target.closest('.iv-status');if(!b)return;const s=(DB.interviews||[]).find(x=>x.id===$('#ivSelect').value);if(!s)return;
+s.slots[+b.dataset.i].status=b.dataset.v;save();renderInterview();});
+$('#ivPdf').onclick=()=>{const s=(DB.interviews||[]).find(x=>x.id===$('#ivSelect').value);if(!s){toast('セッションを選択してください');return;}
+printDoc('面談スケジュール '+s.date,`<table><tr><th>時刻</th><th>生徒</th><th>状態</th><th>メモ</th></tr>${s.slots.map((sl,i)=>`<tr><td>${addMin(s.start,s.dur*i)}</td><td>${esc(sName(sl.studentId))}</td><td>${esc(sl.status)}</td><td>${esc(sl.memo||'')}</td></tr>`).join('')}</table>`);};
+
+/* ===== 保健室・心の天気 ===== */
+$('#hSave').onclick=()=>{const sid=$('#hStudent').value;if(!sid){toast('生徒を選択してください');return;}DB.health.push({id:uid(),studentId:sid,reason:$('#hReason').value,date:$('#hDate').value||todayStr()});save();renderHealth();toast('保存しました');};
+$$('.heart-btn').forEach(b=>b.onclick=()=>{const sid=$('#heartStudent').value;if(!sid){toast('生徒を選択してください');return;}DB.heart[todayStr()]=DB.heart[todayStr()]||{};DB.heart[todayStr()][sid]=b.dataset.h;save();renderHealth();toast('記録しました '+b.dataset.h);});
+function renderHealth(){$('#hList').innerHTML=[...DB.health].sort((a,b)=>b.date.localeCompare(a.date)).map(h=>`<div class="text-xs border-b py-1 flex gap-2">${h.date} ${esc(sName(h.studentId))} ${esc(h.reason)}<button class="btn btn-d h-del ml-auto" data-id="${h.id}">削除</button></div>`).join('')||'<p class="text-xs">なし</p>';
+const days=[...Array(7)].map((_,i)=>todayStr(new Date(Date.now()-i*86400000)));
+$('#heartTrend').innerHTML=days.map(d=>{const h=DB.heart[d]||{};return `<div class="text-xs">${d} ${EMOJI.map(e=>e+Object.values(h).filter(v=>v===e).length).join(' ')}</div>`;}).join('');
+const rc={};DB.health.forEach(h=>rc[h.reason]=(rc[h.reason]||0)+1);
+$('#healthTrend').innerHTML=Object.entries(rc).map(([k,v])=>`<span class="chip">${esc(k)}：${v}</span>`).join('')||'<p class="text-xs">なし</p>';}
+$('#hList').onclick=e=>{const b=e.target.closest('.h-del');if(!b)return;ask('削除しますか？',()=>{DB.health=DB.health.filter(x=>x.id!==b.dataset.id);save();renderHealth();});};
+$('#hPdf').onclick=()=>printDoc('保健室・心の天気',`<table><tr><th>日付</th><th>氏名</th><th>理由</th></tr>${DB.health.map(h=>`<tr><td>${h.date}</td><td>${esc(sName(h.studentId))}</td><td>${esc(h.reason)}</td></tr>`).join('')}</table>`);
+
+/* ===== ポートフォリオ ===== */
+$('#pStudent').addEventListener('change',renderPortfolio);
+$('#pMemoSave').onclick=()=>{const sid=$('#pStudent').value;const t=$('#pMemo').value.trim();if(!sid||!t){toast('生徒を選択し、メモを入力してください');return;}
+DB.memos=DB.memos||[];DB.memos.push({id:uid(),studentId:sid,date:todayStr(),text:t});save();$('#pMemo').value='';renderPortfolio();toast('メモを保存しました');};
+function renderPortfolio(){const sid=$('#pStudent').value;if(!sid){$('#pTimeline').innerHTML='—';$('#pNext').innerHTML='';return;}
+const items=[];
+DB.observations.filter(o=>o.studentId===sid).forEach(o=>items.push([o.date,'📷 観察',o.text||'']));
+(DB.memos||[]).filter(m=>m.studentId===sid).forEach(m=>items.push([m.date,'📝 メモ',m.text]));
+DB.health.filter(h=>h.studentId===sid).forEach(h=>items.push([h.date,'💗 保健室',h.reason]));
+DB.tests.forEach(t=>{if(t.scores[sid]!=null)items.push([t.date,'📊 テスト',t.name+'：'+t.scores[sid]+'点']);});
+for(const d in DB.heart){if(DB.heart[d][sid])items.push([d,'🌤 心の天気',DB.heart[d][sid]]);}
+items.sort((a,b)=>b[0].localeCompare(a[0]));
+$('#pTimeline').innerHTML=items.length?items.map(i=>`<div class="text-xs border-l-2 border-fuchsia-400 pl-2 py-1">${i[0]} <b>${i[1]}</b> ${esc(i[2])}</div>`).join(''):'<p class="text-xs">記録がありません</p>';
+const sug=[];const rate=attendanceRate(sid);
+if(rate<90)sug.push('出席率'+rate+'%。欠席続きの場合は連絡・状況確認を検討。');
+const low=DB.tests.filter(t=>t.scores[sid]!=null&&t.scores[sid]<t.max*0.6);if(low.length)sug.push(low.map(t=>t.name).join('、')+' で基礎の復習・個別支援を検討。');
+if(Object.values(DB.heart).some(h=>h[sid]===EMOJI[3]))sug.push('心の天気で「嵐」の記録あり。1対1の対話時間を検討。');
+if(DB.observations.filter(o=>o.studentId===sid).length<3)sug.push('観察記録が少ないため、今週1件の記録を目安に。');
+$('#pNext').innerHTML=sug.length?'<b>次の仕事の候補：</b><ul class="list-disc ml-4">'+sug.map(x=>`<li>${esc(x)}</li>`).join('')+'</ul>':'<b>次の仕事の候補：</b>特記事項はありません。';}
+
+/* ===== 学級の成長ストーリー ===== */
+const AXES=[['学習文化',['授業','学習','ノート','課題','質問'],'📖'],['協働',['ペア','グループ','相談','協力','話し合い'],'🤝'],['主体性',['自主','自分から','発表','挑戦'],'🚀'],['安心',['生活','落ち着','助け','休み','保健'],'🛟']];
+function axisOf(o){if(o.axis)return o.axis;const t=(o.text||'')+(o.type||'');for(const a of AXES){if(a[1].some(k=>t.includes(k)))return a[0];}return null;}
+function growthData(g,k){const st=DB.students.filter(s=>(!g||s.grade===g)&&(!k||s.klass===k));const ids=st.map(s=>s.id);
+return [...Array(4)].map((_,i)=>{const d=new Date();d.setDate(1);d.setMonth(d.getMonth()-3+i);const m=todayStr(d).slice(0,7);
+const obs=DB.observations.filter(o=>ids.includes(o.studentId)&&o.date.startsWith(m));
+return{m,counts:AXES.map(a=>obs.filter(o=>axisOf(o)===a[0]).length),total:obs.length};});}
+function renderGrowth(){const data=growthData($('#grGrade').value,$('#grClass').value);
+let h='<div class="grid md:grid-cols-4 gap-2">';
+data.forEach(md=>{h+=`<div class="border rounded p-2"><b class="text-xs">${md.m}</b>（記録${md.total}件）`+AXES.map((a,i)=>`<div class="text-[10px] flex items-center gap-1">${a[2]}${a[0]}<div class="bar flex-1" style="width:${Math.min(100,md.counts[i]*20)}%"></div>${md.counts[i]}</div>`).join('')+'</div>';});
+h+='</div><div class="text-xs mt-2">';
+const first=data[0]||{counts:[0,0,0,0]},last=data[data.length-1]||{counts:[0,0,0,0]};
+AXES.forEach((a,i)=>{const d=last.counts[i]-first.counts[i];h+=`<p>${a[2]} <b>${a[0]}</b>：${d>0?'伸びています（+'+d+'）。この手応えを次の活動にも生かせます。':d<0?'記録が減っています（'+d+'）。意識的に観察する時間を設けましょう。':'安定しています。'}</p>`;});
+$('#grOut').innerHTML=h+'</div>';}
+$('#grGrade').onchange=renderGrowth;$('#grClass').onchange=renderGrowth;
+
+/* ===== 授業デザイン4.0 ===== */
+const AXIS_IDEA={'学習文化':'振り返りシェアの定例化','協働':'ペアトークの定例化','主体性':'選択式タスクの導入','安心':'朝のサークルタイム'};
+function renderDesign(){const g=$('#dsGrade').value,k=$('#dsClass').value;
+const st=DB.students.filter(s=>(!g||s.grade===g)&&(!k||s.klass===k));const ids=st.map(s=>s.id);
+const recent=[...DB.observations].filter(o=>ids.includes(o.studentId)).sort((a,b)=>b.date.localeCompare(a.date)).slice(0,5);
+let lowTest=null,lowAvg=1;
+DB.tests.forEach(t=>{const v=ids.map(id=>t.scores[id]).filter(x=>x!=null);if(v.length){const r=v.reduce((a,b)=>a+b,0)/v.length/t.max;if(r<lowAvg){lowAvg=r;lowTest=t;}}});
+let sa=0,sb=0;DB.submissions.forEach(s=>submitStudents(s).filter(x=>ids.includes(x.id)).forEach(x=>{sb++;if(s.status[x.id])sa++;}));
+const subRate=sb?Math.round(sa/sb*100):100;
+const hearts=Object.values(DB.heart).flatMap(h=>ids.map(id=>h[id]).filter(Boolean));
+const storm=hearts.filter(h=>h===EMOJI[3]||h===EMOJI[2]).length;
+const gd=growthData(g,k);const last=gd[gd.length-1];
+const weak=AXES.map((a,i)=>i).sort((x,y)=>last.counts[x]-last.counts[y])[0];
+let h='<h3 class="font-bold text-xs">気づくための材料</h3><ul class="list-disc ml-4 text-xs">';
+h+=recent.length?recent.map(o=>`<li>${o.date} ${esc(sName(o.studentId))}：${esc((o.text||'').slice(0,50))}</li>`).join(''):'<li>観察記録がまだありません。</li>';
+if(lowTest)h+=`<li>得点率が低いテスト：${esc(lowTest.name)}（平均得点率${Math.round(lowAvg*100)}%）</li>`;
+h+=`<li>提出物提出率：${subRate}%</li><li>心の天気（雨・嵐の延べ日数）：${storm}</li></ul>`;
+h+='<h3 class="font-bold text-xs mt-2">次の学びの候補（教師判断用）</h3><ul class="list-disc ml-4 text-xs">';
+const ideas=[];
+if(lowTest)ideas.push(`${lowTest.subject}「${lowTest.name}」のつまずきをペアで教え合う復習ミニ授業（協働×基礎定着）。`);
+if(subRate<80)ideas.push('提出物の見通しを持たせる「計画立て」の時間（主体性×自己管理）。');
+if(storm>3)ideas.push('朝のサークルタイムで気持ちを共有する安心づくり（安心×関係づくり）。');
+ideas.push(`「${AXES[weak][0]}」を伸ばす活動：${AXIS_IDEA[AXES[weak][0]]}を取り入れる。`);
+h+=ideas.map(x=>`<li>${esc(x)}</li>`).join('')+'</ul><p class="text-[10px] text-slate-500 mt-1">※これらは候補です。実際の生徒の姿を踏まえて最終判断してください。</p>';
+$('#dsOut').innerHTML=h;}
+$('#dsGrade').onchange=renderDesign;$('#dsClass').onchange=renderDesign;
+
+/* ===== 分析 ===== */
+function renderAnalysis(){$('#anWatch').innerHTML=watchList().length?watchList().map(w=>`<div class="text-xs border-b py-1"><b>${esc(w.s.name)}</b>（スコア${w.score}）${w.reasons.join('／')}</div>`).join(''):'<p class="text-xs">該当なし</p>';
+const inc=[];DB.students.forEach(s=>{let r=0,p=0;for(const d in DB.heart){const age=(Date.now()-new Date(d))/86400000;const v=DB.heart[d][s.id];if(v===EMOJI[2]||v===EMOJI[3]){if(age<=7)r++;else if(age<=14)p++;}}if(r>p)inc.push(`${esc(s.name)}：直近7日で悪天候${r}日（前週${p}日）`);});
+$('#anTrend').innerHTML=inc.length?inc.map(x=>`<div class="text-xs border-b py-1">⚠ ${x}</div>`).join(''):'<p class="text-xs">大きな変化はありません</p>';
+$('#anCorr1').innerHTML=`<table class="tbl"><tr><th>氏名</th><th>出席率</th><th>平均点</th></tr>${DB.students.map(s=>{const v=DB.tests.map(t=>t.scores[s.id]).filter(x=>x!=null);return `<tr><td>${esc(s.name)}</td><td>${attendanceRate(s.id)}%</td><td>${v.length?(v.reduce((a,b)=>a+b,0)/v.length).toFixed(0):'—'}</td></tr>`;}).join('')}</table>`;
+$('#anCorr2').innerHTML=DB.students.map(s=>`<div class="text-xs border-b py-1">${esc(s.name)}：未提出${DB.submissions.filter(x=>!x.status[s.id]).length} / 観察記録${DB.observations.filter(o=>o.studentId===s.id).length}件</div>`).join('')||'—';}
+$('#anRun').onclick=()=>{renderAnalysis();toast('分析しました');};
+
+/* ===== デモ ===== */
+$('#demoLoad').onclick=()=>{if(DB.students.some(s=>s.demo)){toast('デモデータは既に読み込み済みです');return;}
+const names=['青木 葵','伊藤 蓮','上田 結衣','江ノ本 遥斗','太田 美緒','加藤 大地','木戸 さくら','佐藤 凛','鈴木 琳','高橋 颯','田中 優奈','中村 春香'];
+const ids=names.map(n=>{const id=uid()+Math.random().toString(36).slice(2,4);DB.students.push({id,name:n,grade:'1',klass:'1',note:'デモデータ',demo:true,bday:''});return id;});
+const mk=(i,monthsAgo,day,type,text,axis)=>{const d=new Date();d.setMonth(d.getMonth()-monthsAgo);d.setDate(day);DB.observations.push({id:uid(),studentId:ids[i],type,axis:axis||'',text,date:todayStr(d),demo:true});};
+mk(0,3,10,'授業の様子','ノートに課題を写すだけで、発表はせず、ペア相談でも声が少ない。','学習文化');
+mk(0,2,8,'授業の様子','ペア相談で相手の意見にうなずき、自分の考えを短くだが話せた。','協働');
+mk(0,1,6,'授業の様子','グループで話し合い、自分の考えを発表。根拠も添えられた。','主体性');
+mk(0,0,4,'特別活動','学級討論会で司会役。仲間の意見をつなぐ発言が見られた。','協働');
+mk(1,2,12,'生活・行動','休み時間に友達と話す姿が増えた。','安心');
+mk(2,1,15,'授業の様子','自分から質問に来るなど主体的な姿。','主体性');
+mk(3,0,2,'生活・行動','落ち着いて取り組む日が増えた。','安心');
+const t={id:uid(),name:'デモ数学・基礎確認',subject:'数学',max:100,date:todayStr(),scores:{},demo:true};
+ids.forEach((id,i)=>t.scores[id]=[55,72,88,40,65,91,78,60,83,47,69,75][i]);DB.tests.push(t);
+const sub={id:uid(),type:'提出物（プリント・課題）',content:'デモ数学プリント',due:todayStr(),target:'1年・1組',status:{},demo:true};
+ids.forEach((id,i)=>sub.status[id]=i%3!==0);DB.submissions.push(sub);
+const demoHearts=[EMOJI[1],EMOJI[1],EMOJI[0],EMOJI[0],EMOJI[0],EMOJI[0],EMOJI[0],EMOJI[0],EMOJI[0],EMOJI[0]];
+for(let i=0;i<10;i++){const d=new Date(Date.now()-i*86400000);DB.heart[todayStr(d)]=DB.heart[todayStr(d)]||{};DB.heart[todayStr(d)][ids[0]]=demoHearts[i];}
+save();refreshStudentSelects();render(current);toast('デモデータを読み込みました。②へ進みましょう。');};
+$('#demoRemove').onclick=()=>ask('デモデータを削除しますか？（実データは保持されます）',()=>{
+const dids=DB.students.filter(s=>s.demo).map(s=>s.id);
+DB.students=DB.students.filter(s=>!s.demo);
+DB.observations=DB.observations.filter(o=>!o.demo&&!dids.includes(o.studentId));
+DB.tests=DB.tests.filter(t=>!t.demo);DB.submissions=DB.submissions.filter(s=>!s.demo);
+for(const d in DB.heart){dids.forEach(id=>delete DB.heart[d][id]);}
+save();refreshStudentSelects();render(current);toast('デモデータを削除しました');});
+
+/* ===== 設定・引き継ぎ ===== */
+$('#setSave').onclick=()=>{DB.settings={schoolType:$('#setSchoolType').value,school:$('#setSchool').value,teacher:$('#setTeacher').value,grade:$('#setGrade').value,klass:$('#setClass').value,year:String(Math.min(Math.max(+$('#setYear').value||2026,2000),2100))};save();toast('設定を保存しました');};
+$('#bakBtn').onclick=()=>{download(JSON.stringify(DB,null,2),'kyomu_backup_'+todayStr()+'.json');DB.meta.lastBackup=todayStr();save();toast('バックアップを保存しました');};
+$('#restoreFile').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();
+r.onload=()=>{try{const j=JSON.parse(r.result);if(j.enc){toast('暗号化ファイルです。暗号化復元を使用してください。');return;}
+if(!j||typeof j!=='object'||!Array.isArray(j.students))throw 0;
+DB=mergeDefault(j);save();init();toast('復元しました（サニタイズ済）');}catch(err){toast('JSONが不正です');}};r.readAsText(f);e.target.value='';};
+$('#wipeBtn').onclick=()=>ask('全データを削除しますか？（取り消せません）',()=>{localStorage.removeItem(LS);DB=defaultDB();sessionStorage.removeItem('kp_unlocked');init();toast('削除しました');});
+function handoverHtml(){let h=`<h2>学級概要</h2><p>${esc(DB.settings.year)}年度／${esc(DB.settings.school||'')}／担任：${esc(DB.settings.teacher||'')}／登録${DB.students.length}名</p>`;
+DB.students.forEach(s=>{const rate=attendanceRate(s.id);
+const vals=DB.tests.map(t=>t.scores[s.id]).filter(x=>x!=null);const avg=vals.length?(vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(0):'—';
+const obs=DB.observations.filter(o=>o.studentId===s.id).length;
+const mem=(DB.memos||[]).filter(m=>m.studentId===s.id).map(m=>m.text).join(' ／ ');
+const lastRep=(DB.reportSaves||[]).slice(-1)[0];const rep=lastRep?((lastRep.items.find(i=>i.studentId===s.id)||{}).text||''):'';
+h+=`<h2>${esc(s.name)}（${s.grade}年${s.klass}）</h2><table><tr><th>出席率</th><td>${rate}%</td><th>平均点</th><td>${avg}</td><th>観察記録</th><td>${obs}件</td></tr></table>`;
+if(rep)h+=`<p>最新コメント：${esc(rep)}</p>`;
+if(mem)h+=`<p>申し送りメモ：${esc(mem)}</p>`;});
+h+=`<h2>学級メモ・引き継ぎ事項</h2><pre>${esc(DB.prepMemo||'（なし）')}</pre>`;
+return h;}
+$('#handoverBtn').onclick=()=>{if(!DB.students.length){toast('データがありません');return;}printDoc('引き継ぎパック '+DB.settings.year,handoverHtml());};
+$('#handoverJson').onclick=()=>{if(!DB.students.length){toast('データがありません');return;}download(JSON.stringify(DB,null,2),`kyomu_handover_${todayStr()}.json`);toast('引き継ぎJSONを保存しました（後任機で復元可能）');};
+function renderSettings(){const bytes=((localStorage.getItem(LS))||'').length*2;const kb=Math.round(bytes/1024);
+const pct=Math.min(100,kb/5120*100);
+$('#storageMeter').innerHTML=`<div class="text-xs">💽 データ使用量：約${kb} KB（目安 5MB中）</div><div class="bar mt-1" style="width:${Math.max(2,pct)}%"></div>`;}
+$('#selfTestBtn').onclick=()=>{const R={dashboard:renderDashboard,material:renderMaterial,observe:renderObserve,report:renderReportSaves,guidance:renderGuidance,grades:renderGrades,iep:renderIep,timetable:renderTimetable,contact:renderContact,submit:renderSubmit,letter:renderLetter,students:renderStudents,attendance:renderAttendance,duties:renderDuties,journal:renderJournal,event:renderEvent,interview:renderInterview,health:renderHealth,portfolio:renderPortfolio,growth:renderGrowth,design:renderDesign,analysis:renderAnalysis,settings:renderSettings};
+const res=[];for(const k in R){try{R[k]();res.push([true,k]);}catch(e){res.push([false,k+'：'+(e.message||'')]);}}
+$('#secDiag').innerHTML='<div class="text-xs font-bold mb-1">🩺 セルフテスト結果</div>'+res.map(x=>`<div class="text-xs py-0.5">${x[0]?'✅':'⚠️'} ${esc(x[1])}</div>`).join('');
+toast(res.every(x=>x[0])?'セルフテスト：全画面正常':'セルフテスト：問題を検出');};
+
+/* ===== 起動 ===== */
+function render(id){refreshStudentSelects();buildNav();
+const f=({dashboard:renderDashboard,material:renderMaterial,observe:renderObserve,report:renderReportSaves,guidance:renderGuidance,grades:renderGrades,iep:renderIep,timetable:renderTimetable,contact:renderContact,submit:renderSubmit,letter:renderLetter,students:renderStudents,attendance:renderAttendance,duties:renderDuties,journal:renderJournal,event:renderEvent,interview:renderInterview,health:renderHealth,portfolio:renderPortfolio,growth:renderGrowth,design:renderDesign,analysis:renderAnalysis,settings:renderSettings})[id];
+try{f&&f();}catch(e){toast('⚠ 表示エラー：'+(e.message||'不明'));}}
+function init(){['oDate','hDate','jDate','tDate','iDate','eDate','sDue','aDate','lDate','ivDate'].forEach(id=>{const el=$('#'+id);if(el)el.value=todayStr();});
+$('#aMonth').value=todayStr().slice(0,7);
+$('#setSchoolType').value=DB.settings.schoolType;$('#setSchool').value=DB.settings.school;$('#setTeacher').value=DB.settings.teacher;$('#setGrade').value=DB.settings.grade;$('#setClass').value=DB.settings.klass;$('#setYear').value=DB.settings.year;
+$('#secAuto').value=String(DB.security.autoLock||0);
+$('#gYear').value=DB.settings.year||'2026';
+applyFont();applyDark();restoreDrafts();refreshStudentSelects();armAutoLock();
+if(DB.security.pinHash&&sessionStorage.getItem('kp_unlocked')!=='1')showLock();
+go('dashboard');}
+init();
+</script>
+</body>
+</html>
