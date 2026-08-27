@@ -41,7 +41,6 @@ table.tbl th{background:#f3f0ff}
 .seat-cell{cursor:pointer}.seat-cell:hover{background:#f3f0ff}
 .seat-sel{outline:2px solid #f06fa8;background:#fdf2f8}
 h2{letter-spacing:.02em}
-/* ===== ダークモード ===== */
 html.dark body{background:linear-gradient(160deg,#141126,#1a1530) fixed;color:#e6e2f7}
 html.dark .card{background:#1e1a33;border-color:#2c2650;box-shadow:0 10px 28px rgba(0,0,0,.35)}
 html.dark #dWelcome{background:#262143 !important}
@@ -572,7 +571,6 @@ html.dark .seat-sel{background:#33202a}
 
 <script>
 'use strict';
-/* ===== 基盤 ===== */
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const LS='kyomu_partner_v13';
 const EMOJI=['\u2600\uFE0F','\u2601\uFE0F','\uD83C\uDF27\uFE0F','\u26C8\uFE0F'];
@@ -606,8 +604,6 @@ const sub=(DB.settings.school||DB.settings.teacher)?`<p style="font-size:12px;co
 w.document.write(`<html><head><meta charset="utf-8"><title>${esc(title)}</title><style>body{font-family:sans-serif;padding:24px;line-height:1.7;font-size:13px}table{border-collapse:collapse;width:100%}td,th{border:1px solid #333;padding:5px;font-size:12px}h1{font-size:20px}h2{font-size:15px;margin-top:14px}pre{white-space:pre-wrap}</style></head><body><h1>${esc(title)}</h1>${sub}${html}<script>setTimeout(()=>window.print(),300)<\/script></body></html>`);w.document.close();}
 function copyText(t){if(!t){toast('コピーする内容がありません');return;}if(navigator.clipboard){navigator.clipboard.writeText(t).then(()=>toast('コピーしました'));}else{const ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();toast('コピーしました');}}
 function download(text,name,type='application/json'){const blob=new Blob([text],{type});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000);}
-
-/* ===== セキュリティ ===== */
 async function sha(t){try{if(crypto&&crypto.subtle){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(t));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('');}}catch(e){}let h=0;for(const c of('s'+t)){h=(h*31+c.charCodeAt(0))|0;}return 'f'+h;}
 function b64(buf){const u=new Uint8Array(buf);let s='';for(let i=0;i<u.length;i+=0x8000)s+=String.fromCharCode.apply(null,u.subarray(i,i+0x8000));return btoa(s);}
 function unb64(s){return Uint8Array.from(atob(s),c=>c.charCodeAt(0));}
@@ -655,8 +651,6 @@ if(!j.enc){toast('暗号化ファイルではありません。通常復元を�
 const pin=prompt('復元用PINを入力');if(pin==null)return;
 try{const key=await aesKey(pin,j.salt);const pt=await crypto.subtle.decrypt({name:'AES-GCM',iv:unb64(j.iv)},key,unb64(j.data));
 DB=mergeDefault(JSON.parse(new TextDecoder().decode(pt)));save();init();toast('復元しました（サニタイズ済）');}catch(err){toast('復元失敗（PIN違いまたは破損）');}e.target.value='';};
-
-/* ===== ナビ・フィルタ・検索・表示 ===== */
 let filter={grade:'',klass:''},current='dashboard';
 const NAV=[['dashboard','🏠 ダッシュボード'],['material','📖 授業案ジェネレーター'],['observe','📷 観察記録＋評価文案'],['report','📝 通知表コメント生成'],['guidance','📋 指導要録作成'],['grades','📊 成績管理＋グラフ'],['iep','🎯 IEPテンプレート'],['timetable','🕐 時間割＆準備'],['contact','📞 保護者連絡文例'],['submit','📥 提出物・連絡帳'],['letter','📰 学級通信・おたより'],['students','🧑 児童生徒管理'],['attendance','✅ 出席簿'],['duties','🧹 係・掃除・席替え'],['journal','📒 クラス日誌・週案'],['event','🏫 授業参観・懇談会'],['interview','🗓 面談スケジュール'],['health','💗 保健室・心の天気'],['portfolio','📁 ポートフォリオ'],['growth','🌱 学級の成長ストーリー'],['design','🧭 授業デザイン4.0'],['analysis','📈 データ分析'],['settings','⚙️ 設定']];
 function buildNav(){const overdue=DB.submissions.filter(s=>s.due<todayStr()&&submitStudents(s).some(x=>!s.status[x.id])).length;
@@ -704,8 +698,6 @@ function applyFont(){document.documentElement.classList.toggle('bigfont',!!DB.me
 $('#fontBtn').onclick=()=>{DB.meta.bigFont=DB.meta.bigFont?0:1;save();applyFont();toast(DB.meta.bigFont?'文字サイズ：大':'文字サイズ：標準');};
 function applyDark(){document.documentElement.classList.toggle('dark',!!DB.meta.dark);$('#darkBtn').textContent=DB.meta.dark?'☀️':'🌙';}
 $('#darkBtn').onclick=()=>{DB.meta.dark=DB.meta.dark?0:1;save();applyDark();toast(DB.meta.dark?'ダークモード：オン':'ダークモード：オフ');};
-
-/* ===== 共通ヘルパ ===== */
 function submitStudents(s){if(s.target==='all'||!s.target)return DB.students;const[g,k]=(s.target||'').split('・');return DB.students.filter(x=>x.grade===g&&x.klass===k);}
 function attendanceRate(sid){let p=0,n=0;for(const d in DB.attendance){const v=DB.attendance[d][sid];if(v){n++;if(v!=='欠席')p++;}}return n?Math.round(p/n*100):100;}
 function watchList(){return DB.students.map(s=>{let score=0;const reasons=[];const rate=attendanceRate(s.id);
@@ -719,8 +711,6 @@ const now=new Date();const base=new Date(now.getFullYear(),now.getMonth(),now.ge
 let next=new Date(now.getFullYear(),m-1,d);if(next<base)next.setFullYear(next.getFullYear()+1);
 return{diff:Math.round((next-base)/86400000),md:`${m}/${d}`};}
 const CHK=['出席入力','心の天気確認','提出物確認','日誌入力','保護者連絡メモ','明日の準備'];
-
-/* ===== ダッシュボード ===== */
 function renderDashboard(){
 const now=new Date();$('#dDate').innerHTML=`📅 ${now.getFullYear()}年${now.getMonth()+1}月${now.getDate()}日（${'日月火水木金土'[now.getDay()]}）／ 令和${now.getFullYear()-2018}年`;
 $('#dWelcome').classList.toggle('hidden',DB.students.length>0||!!DB.meta.onboarded);
@@ -754,8 +744,6 @@ $('#pickBtn').onclick=()=>{const st=filteredStudents();if(!st.length){toast('生
 clearInterval(pickTimer);let i=0;const total=12+st.length;
 pickTimer=setInterval(()=>{$('#pickName').textContent=st[i%st.length].name;i++;
 if(i>total){clearInterval(pickTimer);$('#pickName').textContent=st[Math.floor(Math.random()*st.length)].name+' 🎉';}},70);};
-
-/* ===== 授業案 ===== */
 let lastMaterial='';
 $('#mGenBtn').onclick=()=>{const u=$('#mUnit').value.trim();if(!u){toast('単元・テーマを入力してください');return;}
 const subj=$('#mSubject').value,t=Math.min(Math.max(+$('#mTime').value||45,20),120);
@@ -774,8 +762,6 @@ function renderMaterial(){$('#mSavedList').innerHTML=DB.materials.length?DB.mate
 $('#mSavedList').onclick=e=>{const b=e.target.closest('button');if(!b)return;const m=DB.materials.find(x=>x.id===b.dataset.id);if(!m)return;
 if(b.classList.contains('m-del'))ask('削除しますか？',()=>{DB.materials=DB.materials.filter(x=>x.id!==m.id);save();renderMaterial();});
 else{lastMaterial=m.content;$('#mUnit').value=m.title;$('#mPreview').innerHTML=m.content;toast('読み込みました');}};
-
-/* ===== 観察記録 ===== */
 $$('.tab-btn').forEach(b=>b.onclick=()=>{$$('.tab-btn').forEach(x=>x.classList.toggle('btn-p',x===b));['text','voice','cam','file'].forEach(t=>$('#tab-'+t).classList.toggle('hidden',t!==b.dataset.tab));});
 $('#oVoiceBtn').onclick=()=>{const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){toast('このブラウザは音声入力に非対応です');return;}
 if(rec){rec.stop();return;}rec=new SR();rec.lang='ja-JP';$('#oVoiceBtn').textContent='⏹ 停止';
@@ -805,8 +791,6 @@ else if(mode==='name')list.sort((a,b)=>sName(a.studentId).localeCompare(sName(b.
 else list.sort((a,b)=>b.date.localeCompare(a.date));
 $('#oList').innerHTML=list.length?list.map(o=>`<div class="border rounded p-2 text-xs"><div class="flex justify-between">${o.date} <b>${esc(sName(o.studentId))}</b> <span class="chip">${esc(o.type)}</span>${o.axis?`<span class="chip">${esc(o.axis)}</span>`:''}<button class="btn btn-d o-del" data-id="${o.id}">削除</button></div><p>${esc(o.text||'')}</p>${(/^data:image\/(png|jpeg)/.test(o.media||''))?`<img src="${o.media}" class="w-24 rounded">`:''}${o.evalText?`<p class="text-fuchsia-700">【評価】${esc(o.evalText)}</p>`:''}</div>`).join(''):'<p class="text-xs">記録がありません。</p>';}
 $('#oList').onclick=e=>{const b=e.target.closest('.o-del');if(!b)return;ask('削除しますか？',()=>{DB.observations=DB.observations.filter(x=>x.id!==b.dataset.id);save();renderObserve();});};
-
-/* ===== 通知表（学期別保存含む） ===== */
 $('#rGenBtn').onclick=()=>{const st=filteredStudents();if(!st.length){toast('児童生徒を登録してください');return;}
 $('#rOut').innerHTML=st.map(s=>{const obs=DB.observations.filter(o=>o.studentId===s.id).length;
 const txt=`${$('#rTerm').value}：${pick(['落ち着いて取り組み、理解が着実に深まっています。','友達と協力しながら、意欲的に活動に取り組んでいます。','自分の考えをしっかり持ち、表現する力が増してきました。'])} ${pick(['今後は、振り返りを大切にしましょう。','得意な場面でリーダーシップを発揮できるよう期待しています。','基礎の定着に向け、家庭学習との連携を図っていきます。'])}${$('#rYear').checked?` 年間を通じて出席率${attendanceRate(s.id)}%を保ち、集団の中で役割を果たす姿が育ちました。`:''}（観察記録${obs}件参照）`;
@@ -820,8 +804,6 @@ $('#rSaved').onclick=e=>{const b=e.target.closest('button');if(!b)return;const r
 if(b.classList.contains('r-del')){ask('削除しますか？',()=>{DB.reportSaves=DB.reportSaves.filter(x=>x.id!==r.id);save();renderReportSaves();});}
 else if(b.classList.contains('r-pdf')){printDoc('通知表コメント '+r.term,r.items.map(it=>`<h2>${esc(sName(it.studentId))}</h2><pre>${esc(it.text)}</pre>`).join(''));}
 else{$('#rOut').innerHTML=r.items.map(it=>`<div class="border rounded p-2"><b class="text-xs">${esc(sName(it.studentId))}</b><textarea class="inp r-item" data-id="${it.studentId}" rows="3">${esc(it.text)}</textarea></div>`).join('');toast('保存版を読み込みました');}};
-
-/* ===== 指導要録 ===== */
 let gCurrent=null;
 $('#gGenBtn').onclick=()=>{const sid=$('#gStudent').value;if(!sid){toast('児童生徒を選択してください');return;}const s=DB.students.find(x=>x.id===sid);
 $('#gLearn').value=`各教科において、${s.name}さんなりに着実に取り組んでいる。特に興味・関心をもつ分野では、進んで課題を探求する姿が見られる。`;
@@ -839,8 +821,6 @@ function renderGuidance(){$('#gSavedList').innerHTML=DB.guidance.length?DB.guida
 $('#gSavedList').onclick=e=>{const b=e.target.closest('button');if(!b)return;const g=DB.guidance.find(x=>x.id===b.dataset.id);if(!g)return;
 if(b.classList.contains('g-del'))ask('削除しますか？',()=>{DB.guidance=DB.guidance.filter(x=>x.id!==g.id);save();renderGuidance();});
 else{gCurrent=g.studentId;$('#gStudent').value=g.studentId;$('#gYear').value=g.year;$('#gLearn').value=g.learn;$('#gBehavior').value=g.behavior;$('#gActivities').value=g.activities;$('#gSummary').value=g.summary;renderGuidancePreview();}};
-
-/* ===== 成績 ===== */
 $('#tRegBtn').onclick=()=>{if(!$('#tName').value.trim()){toast('テスト名を入力してください');return;}
 DB.tests.push({id:uid(),name:$('#tName').value,subject:$('#tSubject').value,max:Math.min(Math.max(+$('#tMax').value||100,1),1000),date:$('#tDate').value,scores:{}});save();renderGrades();toast('登録しました');};
 $('#tSelect').onchange=renderScores;
@@ -861,8 +841,6 @@ $('#statSum').innerHTML=`<table class="tbl"><tr><th>受験数</th><td>${vals.len
 function renderGrades(){$('#tList').innerHTML=DB.tests.length?DB.tests.map(t=>`<div class="text-xs border-b py-1 flex gap-2"><span class="flex-1">${t.date} 【${esc(t.subject)}】${esc(t.name)}</span><button class="btn btn-d t-del" data-id="${t.id}">削除</button></div>`).join(''):'<p class="text-xs">なし</p>';
 const v=$('#tSelect').value;$('#tSelect').innerHTML='<option value="">テストを選択</option>'+DB.tests.map(t=>`<option value="${t.id}">${esc(t.name)}</option>`).join('');$('#tSelect').value=v;renderScores();}
 $('#tList').onclick=e=>{const b=e.target.closest('.t-del');if(!b)return;ask('削除しますか？',()=>{DB.tests=DB.tests.filter(x=>x.id!==b.dataset.id);save();renderGrades();});};
-
-/* ===== IEP ===== */
 $('#iSaveBtn').onclick=()=>{const sid=$('#iStudent').value;if(!sid){toast('児童生徒を選択してください');return;}
 const r={id:uid(),studentId:sid,area:$('#iArea').value,date:$('#iDate').value||todayStr(),current:$('#iCurrent').value,long:$('#iLong').value,short:$('#iShort').value,support:$('#iSupport').value,review:$('#iReview').value};
 DB.ieps.push(r);save();renderIep();showIep(r);toast('保存しました');};
@@ -871,8 +849,6 @@ $('#iPdfBtn').onclick=()=>printDoc('IEP '+sName($('#iStudent').value),$('#iPrevi
 function renderIep(){$('#iList').innerHTML=DB.ieps.length?DB.ieps.map(r=>`<div class="text-xs border-b py-1 flex gap-2"><span class="flex-1">${r.date} ${esc(sName(r.studentId))}</span><button class="btn i-load" data-id="${r.id}">表示</button><button class="btn btn-d i-del" data-id="${r.id}">削除</button></div>`).join(''):'<p class="text-xs">なし</p>';}
 $('#iList').onclick=e=>{const b=e.target.closest('button');if(!b)return;const r=DB.ieps.find(x=>x.id===b.dataset.id);if(!r)return;
 if(b.classList.contains('i-del'))ask('削除しますか？',()=>{DB.ieps=DB.ieps.filter(x=>x.id!==r.id);save();renderIep();});else showIep(r);};
-
-/* ===== 時間割 ===== */
 const DAYS=['月','火','水','木','金','土'],PERIODS=['1限','2限','3限','4限','5限','6限'];
 function renderTimetable(){let h='<table class="tbl"><tr><th>時限</th>'+DAYS.map(d=>`<th>${d}</th>`).join('')+'</tr>';
 PERIODS.forEach(p=>{h+='<tr><th>'+p+'</th>'+DAYS.map(d=>{const c=DB.timetable[d+'-'+p];return `<td class="tt-cell cursor-pointer hover:bg-purple-50" data-key="${d}-${p}">${c?`<b>${esc(c.subject)}</b><br><span class="text-[10px]">${esc(c.room)}</span>`:'＋'}</td>`;}).join('')+'</tr>';});
@@ -892,8 +868,6 @@ $('#ttSave').onclick=()=>{if(!$('#ttSubject').value.trim()){toast('教科を入�
 $('#ttDelete').onclick=()=>{delete DB.timetable[$('#ttDay').value+'-'+$('#ttPeriod').value];save();$('#ttModal').classList.add('hidden');renderTimetable();};
 $('#ttCancel').onclick=()=>$('#ttModal').classList.add('hidden');
 $('#ttReset').onclick=()=>ask('時間割をリセットしますか？',()=>{DB.timetable={};save();renderTimetable();});
-
-/* ===== 保護者連絡 ===== */
 $('#cGenBtn').onclick=()=>{const n=sName($('#cStudent').value),tone=$('#cTone').value,ex=$('#cExtra').value,scene=$('#cScene').value;
 const open=tone==='やわらかい'?'いつもお子さまの様子をお知らせいただき、ありがとうございます。':tone==='心配・共感'?'このたびはご心配をおかけしております。':'いつも教育活動へのご理解・ご協力をいただき、ありがとうございます。';
 const body={'欠席連絡（安否確認）':`本日${n}さんがお休みですが、ご連絡が取れておりません。ご都合がよろしければ、ご一報いただけますと幸いです。`,'忘れ物・持ち物の確認':`${n}さんの持ち物について確認させていただきたくご連絡いたしました。${ex||'明日の持ち物について、ご家庭でもご確認いただけますと幸いです。'}`,'よい出来事の報告':`本日、${n}さんの素晴らしい姿がありましたのでご連絡いたしました。${ex||'クラスの皆の前で発表し、大きな拍手を受けました。'}`,'体調の心配・共感':`${n}さんの体調について伺い、心配しております。${ex||'無理をなさらず、ゆっくり休養いただけますようお願いいたします。'}`,'規律に関するお願い':`${n}さんの学校での様子について、ご相談させていただきたくご連絡いたしました。${ex||'ご家庭でもお話し合っていただけますと幸いです。'}`,'行事・日程のお知らせ':`今後の行事予定につきましてご案内申し上げます。${ex||'詳細は別途おたよりをご確認ください。'}`}[scene];
@@ -904,8 +878,6 @@ $('#cSave').onclick=()=>{if(!$('#cOut').value){toast('文面がありません')
 function renderContact(){$('#cList').innerHTML=DB.contacts.length?DB.contacts.map(c=>`<div class="text-xs border-b py-1 flex gap-2">${c.date} ${esc(c.scene)}（${esc(sName(c.student))}）<button class="btn c-load ml-auto" data-id="${c.id}">表示</button><button class="btn btn-d c-del" data-id="${c.id}">削除</button></div>`).join(''):'<p class="text-xs">なし</p>';}
 $('#cList').onclick=e=>{const b=e.target.closest('button');if(!b)return;const c=DB.contacts.find(x=>x.id===b.dataset.id);if(!c)return;
 if(b.classList.contains('c-del'))ask('削除しますか？',()=>{DB.contacts=DB.contacts.filter(x=>x.id!==c.id);save();renderContact();});else $('#cOut').value=c.text;};
-
-/* ===== 提出物 ===== */
 $('#sRegBtn').onclick=()=>{if(!$('#sContent').value.trim()){toast('内容を入力してください');return;}
 DB.submissions.push({id:uid(),type:$('#sType').value,content:$('#sContent').value,due:$('#sDue').value||todayStr(),target:$('#sTarget').value,status:{}});save();renderSubmit();toast('登録しました');};
 $('#sSelect').onchange=renderChecklist;
@@ -917,8 +889,6 @@ $('#sBulkUn').onclick=()=>{const s=DB.submissions.find(x=>x.id===$('#sSelect').v
 function renderSubmit(){$('#sList').innerHTML=DB.submissions.length?DB.submissions.map(s=>`<div class="text-xs border-b py-1 flex gap-2 items-center"><span class="flex-1">${esc(s.content)}</span><span class="chip">${dueLabel(s.due)}</span><button class="btn btn-d s-del" data-id="${s.id}">削除</button></div>`).join(''):'<p class="text-xs">なし</p>';
 const v=$('#sSelect').value;$('#sSelect').innerHTML='<option value="">提出物を選択</option>'+DB.submissions.map(s=>`<option value="${s.id}">${esc(s.content)}（${s.due}）</option>`).join('');$('#sSelect').value=v;renderChecklist();}
 $('#sList').onclick=e=>{const b=e.target.closest('.s-del');if(!b)return;ask('削除しますか？',()=>{DB.submissions=DB.submissions.filter(x=>x.id!==b.dataset.id);save();renderSubmit();});};
-
-/* ===== 学級通信 ===== */
 $('#lAiBtn').onclick=()=>{const kw=$('#lKeywords').value.trim().split(/[\n,、]/).filter(Boolean);
 $('#lBody').value=($('#lBody').value?$('#lBody').value+'\n\n':'')+(kw.length?kw.map(k=>`${k}。子どもたちの姿から、日々の成長を感じます。`).join('\n'):'今週も、子どもたちはそれぞれの場面で頑張る姿を見せてくれました。');toast('文章化しました');};
 $('#lApplyBtn').onclick=()=>{const t=$('#lTemplate').value;if(!t){toast('テンプレートを選択してください');return;}
@@ -931,8 +901,6 @@ function renderLetter(){$('#lList').innerHTML=DB.letters.length?DB.letters.map(l
 $('#lList').onclick=e=>{const b=e.target.closest('button');if(!b)return;const l=DB.letters.find(x=>x.id===b.dataset.id);if(!l)return;
 if(b.classList.contains('l-del'))ask('削除しますか？',()=>{DB.letters=DB.letters.filter(x=>x.id!==l.id);save();renderLetter();});
 else{$('#lBody').value=l.body;$('#lTitle').value=l.title;$('#lDate').value=l.date;}};
-
-/* ===== 児童生徒 ===== */
 let stEdit=null;
 $('#stRegBtn').onclick=()=>{const n=$('#stName').value.trim();if(!n){toast('氏名を入力してください');return;}
 if(stEdit){Object.assign(DB.students.find(x=>x.id===stEdit),{name:n,grade:$('#stGrade').value,klass:$('#stClass').value,note:$('#stNote').value,bday:$('#stBday').value});toast('更新しました');}
@@ -946,8 +914,6 @@ return `<div class="text-xs border-b py-1 flex items-center gap-2"><span class="
 $('#stList').onclick=e=>{const b=e.target.closest('button');if(!b)return;const s=DB.students.find(x=>x.id===b.dataset.id);if(!s)return;
 if(b.classList.contains('st-del'))ask(s.name+'さんを削除しますか？',()=>{DB.students=DB.students.filter(x=>x.id!==s.id);save();refreshStudentSelects();renderStudents();});
 else{stEdit=s.id;$('#stName').value=s.name;$('#stGrade').value=s.grade;$('#stClass').value=s.klass;$('#stNote').value=s.note||'';$('#stBday').value=s.bday||'';$('#stCancelBtn').classList.remove('hidden');}};
-
-/* ===== 出席簿 ===== */
 $('#aDate').addEventListener('change',renderAttendance);
 $('#aAllPresent').onclick=()=>{const d=$('#aDate').value;if(!d)return;DB.attendance[d]=DB.attendance[d]||{};filteredStudents().forEach(s=>DB.attendance[d][s.id]='出席');save();renderAttendance();toast('全員を出席にしました');};
 $('#aCsv').onclick=()=>{const m=$('#aMonth').value;if(!m)return;const rows=[['氏名','出席','欠席','遅刻','早退']];
@@ -961,8 +927,6 @@ function renderMonth(){const m=$('#aMonth').value;if(!m)return;
 const rows=filteredStudents().map(s=>{const c={出席:0,欠席:0,遅刻:0,早退:0};for(const d in DB.attendance){if(d.startsWith(m)){const v=DB.attendance[d][s.id];if(v)c[v]++;}}return `<tr><td>${esc(s.name)}</td><td>${c.出席}</td><td>${c.欠席}</td><td>${c.遅刻}</td><td>${c.早退}</td></tr>`;});
 $('#aSummary').innerHTML=rows.length?`<table class="tbl"><tr><th>氏名</th><th>出席</th><th>欠席</th><th>遅刻</th><th>早退</th></tr>${rows.join('')}</table>`:'—';}
 $('#aPdf').onclick=()=>{const d=$('#aDate').value;printDoc('出席簿 '+d,`<table><tr><th>氏名</th><th>状態</th></tr>${filteredStudents().map(s=>`<tr><td>${esc(s.name)}</td><td>${(DB.attendance[d]||{})[s.id]||'—'}</td></tr>`).join('')}</table>`);};
-
-/* ===== 係・掃除・席替え ===== */
 const ROLE_NAMES=['学級委員','保健委員','給食委員','図書委員','環境委員','体育委員','放送委員','掲示委員'];
 const CLEAN_AREAS=['教室','廊下','トイレ','階段','昇降口'];
 $('#duGenBtn').onclick=()=>{const st=filteredStudents();if(!st.length){toast('生徒を登録してください');return;}
@@ -994,8 +958,6 @@ return `<div class="text-xs border-b py-1"><b>${esc(r.name)}</b>：${r.members.m
 $('#duClean').innerHTML=(DB.duties.cleaning||[]).length?DB.duties.cleaning.map(r=>`<div class="text-xs border-b py-1"><b>${esc(r.name)}</b>：${r.members.map(m=>esc(sName(m))).join('、')}</div>`).join(''):'<p class="text-xs">未生成</p>';
 renderSeats();}
 $('#duRoles').onclick=e=>{const b=e.target.closest('.du-del');if(!b)return;ask('削除しますか？',()=>{const arr=DB.duties[b.dataset.t]||[];arr.splice(+b.dataset.i,1);save();renderDuties();});};
-
-/* ===== 日誌・週案 ===== */
 $('#jAuto').onclick=()=>{const d=todayStr();const att=DB.attendance[d]||{};const st=filteredStudents();
 const abs=st.filter(s=>att[s.id]==='欠席').map(s=>s.name);const late=st.filter(s=>att[s.id]==='遅刻').length;
 const h=DB.heart[d]||{};const hc={};st.forEach(s=>{const v=h[s.id];if(v)hc[v]=(hc[v]||0)+1;});
@@ -1013,8 +975,6 @@ function renderJournal(){const tj=DB.journals.find(j=>j.date===todayStr());
 $('#jToday').innerHTML=tj?`<p class="text-xs border rounded p-2">${esc(tj.text)}</p>`:'<p class="text-xs">まだ入力されていません</p>';
 $('#jList').innerHTML=[...DB.journals].sort((a,b)=>b.date.localeCompare(a.date)).map(j=>`<div class="text-xs border-b py-1 flex gap-2"><span class="flex-1">${j.date} ${esc((j.text||'').slice(0,40))}</span><button class="btn btn-d j-del" data-id="${j.id}">削除</button></div>`).join('')||'<p class="text-xs">なし</p>';}
 $('#jList').onclick=e=>{const b=e.target.closest('.j-del');if(!b)return;ask('削除しますか？',()=>{DB.journals=DB.journals.filter(x=>x.id!==b.dataset.id);save();renderJournal();});};
-
-/* ===== イベント ===== */
 $('#eSave').onclick=()=>{if(!$('#eName').value.trim()){toast('イベント名を入力してください');return;}DB.events.push({id:uid(),name:$('#eName').value,date:$('#eDate').value||todayStr(),type:$('#eType').value,att:{}});save();renderEvent();toast('保存しました');};
 $('#eSelect').onchange=renderEventAttend;
 function renderEventAttend(){const ev=DB.events.find(x=>x.id===$('#eSelect').value);
@@ -1027,8 +987,6 @@ function renderEvent(){$('#eList').innerHTML=DB.events.length?[...DB.events].sor
 const v=$('#eSelect').value;$('#eSelect').innerHTML='<option value="">イベントを選択</option>'+DB.events.map(ev=>`<option value="${ev.id}">${esc(ev.name)}</option>`).join('');$('#eSelect').value=v;renderEventAttend();}
 $('#eList').onclick=e=>{const b=e.target.closest('.e-del');if(!b)return;const ev=DB.events.find(x=>x.id===b.dataset.id);if(!ev)return;
 ask('削除しますか？',()=>{DB.events=DB.events.filter(x=>x.id!==ev.id);save();renderEvent();});};
-
-/* ===== 面談スケジュール ===== */
 $('#ivGen').onclick=()=>{const st=filteredStudents();if(!st.length){toast('生徒を登録してください');return;}
 const dur=+$('#ivDur').value;
 DB.interviews=DB.interviews||[];
@@ -1051,8 +1009,6 @@ $('#ivTable').addEventListener('click',e=>{const b=e.target.closest('.iv-status'
 s.slots[+b.dataset.i].status=b.dataset.v;save();renderInterview();});
 $('#ivPdf').onclick=()=>{const s=(DB.interviews||[]).find(x=>x.id===$('#ivSelect').value);if(!s){toast('セッションを選択してください');return;}
 printDoc('面談スケジュール '+s.date,`<table><tr><th>時刻</th><th>生徒</th><th>状態</th><th>メモ</th></tr>${s.slots.map((sl,i)=>`<tr><td>${addMin(s.start,s.dur*i)}</td><td>${esc(sName(sl.studentId))}</td><td>${esc(sl.status)}</td><td>${esc(sl.memo||'')}</td></tr>`).join('')}</table>`);};
-
-/* ===== 保健室・心の天気 ===== */
 $('#hSave').onclick=()=>{const sid=$('#hStudent').value;if(!sid){toast('生徒を選択してください');return;}DB.health.push({id:uid(),studentId:sid,reason:$('#hReason').value,date:$('#hDate').value||todayStr()});save();renderHealth();toast('保存しました');};
 $$('.heart-btn').forEach(b=>b.onclick=()=>{const sid=$('#heartStudent').value;if(!sid){toast('生徒を選択してください');return;}DB.heart[todayStr()]=DB.heart[todayStr()]||{};DB.heart[todayStr()][sid]=b.dataset.h;save();renderHealth();toast('記録しました '+b.dataset.h);});
 function renderHealth(){$('#hList').innerHTML=[...DB.health].sort((a,b)=>b.date.localeCompare(a.date)).map(h=>`<div class="text-xs border-b py-1 flex gap-2">${h.date} ${esc(sName(h.studentId))} ${esc(h.reason)}<button class="btn btn-d h-del ml-auto" data-id="${h.id}">削除</button></div>`).join('')||'<p class="text-xs">なし</p>';
@@ -1062,8 +1018,6 @@ const rc={};DB.health.forEach(h=>rc[h.reason]=(rc[h.reason]||0)+1);
 $('#healthTrend').innerHTML=Object.entries(rc).map(([k,v])=>`<span class="chip">${esc(k)}：${v}</span>`).join('')||'<p class="text-xs">なし</p>';}
 $('#hList').onclick=e=>{const b=e.target.closest('.h-del');if(!b)return;ask('削除しますか？',()=>{DB.health=DB.health.filter(x=>x.id!==b.dataset.id);save();renderHealth();});};
 $('#hPdf').onclick=()=>printDoc('保健室・心の天気',`<table><tr><th>日付</th><th>氏名</th><th>理由</th></tr>${DB.health.map(h=>`<tr><td>${h.date}</td><td>${esc(sName(h.studentId))}</td><td>${esc(h.reason)}</td></tr>`).join('')}</table>`);
-
-/* ===== ポートフォリオ ===== */
 $('#pStudent').addEventListener('change',renderPortfolio);
 $('#pMemoSave').onclick=()=>{const sid=$('#pStudent').value;const t=$('#pMemo').value.trim();if(!sid||!t){toast('生徒を選択し、メモを入力してください');return;}
 DB.memos=DB.memos||[];DB.memos.push({id:uid(),studentId:sid,date:todayStr(),text:t});save();$('#pMemo').value='';renderPortfolio();toast('メモを保存しました');};
@@ -1082,8 +1036,6 @@ const low=DB.tests.filter(t=>t.scores[sid]!=null&&t.scores[sid]<t.max*0.6);if(lo
 if(Object.values(DB.heart).some(h=>h[sid]===EMOJI[3]))sug.push('心の天気で「嵐」の記録あり。1対1の対話時間を検討。');
 if(DB.observations.filter(o=>o.studentId===sid).length<3)sug.push('観察記録が少ないため、今週1件の記録を目安に。');
 $('#pNext').innerHTML=sug.length?'<b>次の仕事の候補：</b><ul class="list-disc ml-4">'+sug.map(x=>`<li>${esc(x)}</li>`).join('')+'</ul>':'<b>次の仕事の候補：</b>特記事項はありません。';}
-
-/* ===== 学級の成長ストーリー ===== */
 const AXES=[['学習文化',['授業','学習','ノート','課題','質問'],'📖'],['協働',['ペア','グループ','相談','協力','話し合い'],'🤝'],['主体性',['自主','自分から','発表','挑戦'],'🚀'],['安心',['生活','落ち着','助け','休み','保健'],'🛟']];
 function axisOf(o){if(o.axis)return o.axis;const t=(o.text||'')+(o.type||'');for(const a of AXES){if(a[1].some(k=>t.includes(k)))return a[0];}return null;}
 function growthData(g,k){const st=DB.students.filter(s=>(!g||s.grade===g)&&(!k||s.klass===k));const ids=st.map(s=>s.id);
@@ -1098,8 +1050,6 @@ const first=data[0]||{counts:[0,0,0,0]},last=data[data.length-1]||{counts:[0,0,0
 AXES.forEach((a,i)=>{const d=last.counts[i]-first.counts[i];h+=`<p>${a[2]} <b>${a[0]}</b>：${d>0?'伸びています（+'+d+'）。この手応えを次の活動にも生かせます。':d<0?'記録が減っています（'+d+'）。意識的に観察する時間を設けましょう。':'安定しています。'}</p>`;});
 $('#grOut').innerHTML=h+'</div>';}
 $('#grGrade').onchange=renderGrowth;$('#grClass').onchange=renderGrowth;
-
-/* ===== 授業デザイン4.0 ===== */
 const AXIS_IDEA={'学習文化':'振り返りシェアの定例化','協働':'ペアトークの定例化','主体性':'選択式タスクの導入','安心':'朝のサークルタイム'};
 function renderDesign(){const g=$('#dsGrade').value,k=$('#dsClass').value;
 const st=DB.students.filter(s=>(!g||s.grade===g)&&(!k||s.klass===k));const ids=st.map(s=>s.id);
@@ -1125,16 +1075,12 @@ ideas.push(`「${AXES[weak][0]}」を伸ばす活動：${AXIS_IDEA[AXES[weak][0]
 h+=ideas.map(x=>`<li>${esc(x)}</li>`).join('')+'</ul><p class="text-[10px] text-slate-500 mt-1">※これらは候補です。実際の生徒の姿を踏まえて最終判断してください。</p>';
 $('#dsOut').innerHTML=h;}
 $('#dsGrade').onchange=renderDesign;$('#dsClass').onchange=renderDesign;
-
-/* ===== 分析 ===== */
 function renderAnalysis(){$('#anWatch').innerHTML=watchList().length?watchList().map(w=>`<div class="text-xs border-b py-1"><b>${esc(w.s.name)}</b>（スコア${w.score}）${w.reasons.join('／')}</div>`).join(''):'<p class="text-xs">該当なし</p>';
 const inc=[];DB.students.forEach(s=>{let r=0,p=0;for(const d in DB.heart){const age=(Date.now()-new Date(d))/86400000;const v=DB.heart[d][s.id];if(v===EMOJI[2]||v===EMOJI[3]){if(age<=7)r++;else if(age<=14)p++;}}if(r>p)inc.push(`${esc(s.name)}：直近7日で悪天候${r}日（前週${p}日）`);});
 $('#anTrend').innerHTML=inc.length?inc.map(x=>`<div class="text-xs border-b py-1">⚠ ${x}</div>`).join(''):'<p class="text-xs">大きな変化はありません</p>';
 $('#anCorr1').innerHTML=`<table class="tbl"><tr><th>氏名</th><th>出席率</th><th>平均点</th></tr>${DB.students.map(s=>{const v=DB.tests.map(t=>t.scores[s.id]).filter(x=>x!=null);return `<tr><td>${esc(s.name)}</td><td>${attendanceRate(s.id)}%</td><td>${v.length?(v.reduce((a,b)=>a+b,0)/v.length).toFixed(0):'—'}</td></tr>`;}).join('')}</table>`;
 $('#anCorr2').innerHTML=DB.students.map(s=>`<div class="text-xs border-b py-1">${esc(s.name)}：未提出${DB.submissions.filter(x=>!x.status[s.id]).length} / 観察記録${DB.observations.filter(o=>o.studentId===s.id).length}件</div>`).join('')||'—';}
 $('#anRun').onclick=()=>{renderAnalysis();toast('分析しました');};
-
-/* ===== デモ ===== */
 $('#demoLoad').onclick=()=>{if(DB.students.some(s=>s.demo)){toast('デモデータは既に読み込み済みです');return;}
 const names=['青木 葵','伊藤 蓮','上田 結衣','江ノ本 遥斗','太田 美緒','加藤 大地','木戸 さくら','佐藤 凛','鈴木 琳','高橋 颯','田中 優奈','中村 春香'];
 const ids=names.map(n=>{const id=uid()+Math.random().toString(36).slice(2,4);DB.students.push({id,name:n,grade:'1',klass:'1',note:'デモデータ',demo:true,bday:''});return id;});
@@ -1160,8 +1106,6 @@ DB.observations=DB.observations.filter(o=>!o.demo&&!dids.includes(o.studentId));
 DB.tests=DB.tests.filter(t=>!t.demo);DB.submissions=DB.submissions.filter(s=>!s.demo);
 for(const d in DB.heart){dids.forEach(id=>delete DB.heart[d][id]);}
 save();refreshStudentSelects();render(current);toast('デモデータを削除しました');});
-
-/* ===== 設定・引き継ぎ ===== */
 $('#setSave').onclick=()=>{DB.settings={schoolType:$('#setSchoolType').value,school:$('#setSchool').value,teacher:$('#setTeacher').value,grade:$('#setGrade').value,klass:$('#setClass').value,year:String(Math.min(Math.max(+$('#setYear').value||2026,2000),2100))};save();toast('設定を保存しました');};
 $('#bakBtn').onclick=()=>{download(JSON.stringify(DB,null,2),'kyomu_backup_'+todayStr()+'.json');DB.meta.lastBackup=todayStr();save();toast('バックアップを保存しました');};
 $('#restoreFile').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();
@@ -1189,8 +1133,6 @@ $('#selfTestBtn').onclick=()=>{const R={dashboard:renderDashboard,material:rende
 const res=[];for(const k in R){try{R[k]();res.push([true,k]);}catch(e){res.push([false,k+'：'+(e.message||'')]);}}
 $('#secDiag').innerHTML='<div class="text-xs font-bold mb-1">🩺 セルフテスト結果</div>'+res.map(x=>`<div class="text-xs py-0.5">${x[0]?'✅':'⚠️'} ${esc(x[1])}</div>`).join('');
 toast(res.every(x=>x[0])?'セルフテスト：全画面正常':'セルフテスト：問題を検出');};
-
-/* ===== 起動 ===== */
 function render(id){refreshStudentSelects();buildNav();
 const f=({dashboard:renderDashboard,material:renderMaterial,observe:renderObserve,report:renderReportSaves,guidance:renderGuidance,grades:renderGrades,iep:renderIep,timetable:renderTimetable,contact:renderContact,submit:renderSubmit,letter:renderLetter,students:renderStudents,attendance:renderAttendance,duties:renderDuties,journal:renderJournal,event:renderEvent,interview:renderInterview,health:renderHealth,portfolio:renderPortfolio,growth:renderGrowth,design:renderDesign,analysis:renderAnalysis,settings:renderSettings})[id];
 try{f&&f();}catch(e){toast('⚠ 表示エラー：'+(e.message||'不明'));}}
