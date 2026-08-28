@@ -4,8 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="color-scheme" content="light dark">
-<title>教務パートナー v18 - 授業デザイン4.0</title>
+<title>教務パートナー v19 - 授業デザイン4.0</title>
 <script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/mammoth@1.7.2/mammoth.browser.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
@@ -71,7 +74,6 @@ html.dark .seat-sel{background:#33202a}
 </style>
 </head>
 <body class="text-sm">
-
 <div id="lockOverlay" class="hidden fixed inset-0 z-[60] text-white flex items-center justify-center bg-gradient-to-br from-indigo-950 via-purple-950 to-slate-950">
  <div class="text-center w-72">
   <div class="text-3xl mb-2">🔒</div>
@@ -82,14 +84,14 @@ html.dark .seat-sel{background:#33202a}
   <button id="lockUnlock" class="btn btn-p w-full mt-1">ロック解除</button>
  </div>
 </div>
-
 <header class="text-white px-3 py-2 flex items-center gap-2 sticky top-0 z-40 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 shadow-lg">
   <button id="menuBtn" class="btn !bg-white/20 !border-white/40 !text-white">☰</button>
-  <div class="font-bold">教務パートナー <span class="text-purple-100 text-xs font-normal">教員業務をつなぐ校務支援アプリ v18</span></div>
+  <div class="font-bold">教務パートナー <span class="text-purple-100 text-xs font-normal">教員業務をつなぐ校務支援アプリ v19</span></div>
   <button id="darkBtn" class="btn !bg-white/20 !border-white/40 !text-white" title="ダークモード切替">🌙</button>
   <button id="fontBtn" class="btn !bg-white/20 !border-white/40 !text-white" title="文字サイズ切替">Aa</button>
-  <div class="relative hidden sm:block ml-2">
-    <input id="gSearch" class="inp !w-40" placeholder="🔍 生徒検索" maxlength="20">
+  <button id="searchToggle" class="btn !bg-white/20 !border-white/40 !text-white sm:hidden" title="生徒検索">🔍</button>
+  <div class="relative ml-2">
+    <input id="gSearch" class="inp !w-40 hidden sm:block" placeholder="🔍 生徒検索" maxlength="20">
     <div id="gSearchRes" class="hidden absolute left-0 top-9 w-56 bg-white rounded-xl shadow-xl border border-purple-100 z-50 overflow-hidden"></div>
   </div>
   <div class="ml-auto flex items-center gap-1 text-xs">
@@ -98,16 +100,17 @@ html.dark .seat-sel{background:#33202a}
     <button id="fClear" class="btn !bg-white/20 !border-white/40 !text-white">解除</button>
   </div>
 </header>
-
+<div id="mobileSearchBar" class="hidden sm:hidden fixed left-2 right-2 top-12 z-50 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-purple-100 p-2">
+  <input id="gSearchMobile" class="inp w-full" placeholder="🔍 生徒検索" maxlength="20">
+  <div id="gSearchResMobile" class="mt-1 rounded-lg overflow-hidden"></div>
+</div>
 <div class="flex">
 <aside id="sidebar" class="w-56 p-2 hidden md:block shrink-0 sticky top-12 self-start max-h-[calc(100vh-3rem)] overflow-y-auto">
   <button class="btn btn-p w-full mb-2" data-nav="demo">10分で使ってみる</button>
   <nav id="sideNav"></nav>
   <p class="text-[10px] text-slate-500 mt-4 px-2">すべてのデータはこのブラウザに保存されます。個人情報の取り扱いにご注意ください。<br>外部生成AIサービスへ児童生徒データを送信する機能はありません。外部CDNは読み込みます。<br>ショートカット：Ctrl+Shift+L ロック／Esc モーダル閉じる／🌙 ダーク／Aa 文字サイズ。</p>
 </aside>
-
 <main class="flex-1 p-3 pb-20">
-
 <section id="sec-demo" class="section hidden">
  <h2 class="text-lg font-bold mb-2">10分で使ってみる</h2>
  <div class="card text-xs">架空の中学校1年1組を使って、観察記録 → 成長のストーリー → 学級の成長 → 授業デザイン4.0を体験します。<br>実データが入っている場合、デモ開始では上書きしません。必要なら先にバックアップしてください。</div>
@@ -119,7 +122,6 @@ html.dark .seat-sel{background:#33202a}
  </div>
  <div class="card text-xs"><b>先生への約束</b>：この画面の候補は、先生の判断を置き換えるものではありません。元記録を確認し、実際の生徒の姿を踏まえて、次の授業を先生自身が決めます。</div>
 </section>
-
 <section id="sec-dashboard" class="section">
   <h2 class="text-lg font-bold">ダッシュボード <span class="text-xs font-normal text-slate-500">今日の教務コマンドセンター</span></h2>
   <div class="flex items-center gap-2 mb-2 flex-wrap">
@@ -158,7 +160,6 @@ html.dark .seat-sel{background:#33202a}
     <div class="card"><h3 class="font-bold mb-1 text-xs">今日の提出物チェック</h3><div id="dToday"></div></div>
   </div>
 </section>
-
 <section id="sec-material" class="section hidden">
   <h2 class="text-lg font-bold mb-2">授業案ジェネレーター</h2>
   <div class="grid md:grid-cols-2 gap-2">
@@ -177,8 +178,46 @@ html.dark .seat-sel{background:#33202a}
   </div>
   <div class="card"><h3 class="font-bold mb-1">保存済み教材</h3><div id="mSavedList"></div></div>
 </section>
-
+<section id="sec-aigen" class="section hidden">
+  <h2 class="text-lg font-bold mb-2">🧪 資料から授業設計（AI）</h2>
+  <p class="text-xs text-slate-500 mb-2">PDF・Word・画像・字幕テキストなどの資料を読み込ませると、AIが内容を整理し、授業案・スライド・インフォグラフィック・簡易動画の下書きを自動生成します。<b>設定画面でAPIキーの登録と同意が必要です。</b></p>
+  <div class="grid md:grid-cols-2 gap-2">
+    <div class="card">
+      <h3 class="font-bold mb-1">① 資料を追加</h3>
+      <div class="flex flex-wrap gap-2 mb-2">
+        <label class="btn cursor-pointer">📄 PDF/Word/画像<input id="aiFilePick" type="file" accept=".pdf,.docx,.doc,image/*" multiple class="hidden"></label>
+        <label class="btn cursor-pointer">🎬 動画の字幕/文字起こし(.srt/.vtt/.txt)<input id="aiTransPick" type="file" accept=".srt,.vtt,.txt" multiple class="hidden"></label>
+      </div>
+      <label class="lbl">またはテキストを直接貼り付け</label>
+      <textarea id="aiPasteText" class="inp" rows="4" placeholder="教科書の一節、Webページの本文、動画の文字起こしなどを貼り付け"></textarea>
+      <button id="aiPasteAdd" class="btn mt-1">貼り付けを資料に追加</button>
+      <div class="mt-2">
+        <h4 class="text-xs font-bold text-slate-500 mb-1">追加済みの資料</h4>
+        <div id="aiSourceList" class="text-xs"></div>
+      </div>
+      <p id="aiNote" class="text-[10px] text-slate-500 mt-1">※動画ファイル自体は送信されません。字幕・文字起こしテキストをご用意ください。資料は保存されず、画面を離れると消えます。</p>
+    </div>
+    <div class="card">
+      <h3 class="font-bold mb-1">② 授業の条件</h3>
+      <label class="lbl">学年</label><select id="aiGrade" class="inp"></select>
+      <label class="lbl">教科</label><input id="aiSubject" class="inp" placeholder="例：理科" maxlength="20">
+      <label class="lbl">単元テーマ（未入力ならAIが資料から判断）</label><input id="aiUnit" class="inp" maxlength="40">
+      <label class="lbl">授業時間（分）</label><input id="aiTime" type="number" class="inp" value="45" min="20" max="120">
+      <label class="lbl">出力してほしいもの</label>
+      <div class="text-xs flex flex-col gap-1">
+        <label><input type="checkbox" id="aiOutPlan" checked class="mr-1">授業案（印刷用ドキュメント）</label>
+        <label><input type="checkbox" id="aiOutSlide" checked class="mr-1">スライド（PPTXダウンロード）</label>
+        <label><input type="checkbox" id="aiOutInfo" checked class="mr-1">インフォグラフィック（画像）</label>
+        <label><input type="checkbox" id="aiOutVideo" checked class="mr-1">簡易動画（スライドショー＋音声ナレーション）</label>
+      </div>
+      <button id="aiGenBtn" class="btn btn-p mt-2 w-full">🤖 AIで生成する</button>
+      <div id="aiGenStatus" class="text-xs mt-1"></div>
+    </div>
+  </div>
+  <div id="aiResults" class="mt-2"></div>
+</section>
 <section id="sec-observe" class="section hidden">
+
   <h2 class="text-lg font-bold mb-2">観察記録カメラ＋評価文案アシスタント</h2>
   <div class="grid md:grid-cols-2 gap-2">
     <div class="card"><h3 class="font-bold mb-1">新規記録</h3>
@@ -205,7 +244,6 @@ html.dark .seat-sel{background:#33202a}
     <div class="card"><h3 class="font-bold mb-1">記録一覧 <select id="oSort" class="inp !w-auto"><option value="new">新しい順</option><option value="old">古い順</option><option value="name">生徒別</option></select></h3><div id="oList" class="space-y-2 max-h-[500px] overflow-auto"></div></div>
   </div>
 </section>
-
 <section id="sec-report" class="section hidden">
   <h2 class="text-lg font-bold mb-2">通知表コメント一括生成</h2>
   <div class="card">
@@ -217,7 +255,6 @@ html.dark .seat-sel{background:#33202a}
     <h3 class="font-bold mt-3 mb-1 text-xs">保存済み（学期別）</h3><div id="rSaved"></div>
   </div>
 </section>
-
 <section id="sec-guidance" class="section hidden">
   <h2 class="text-lg font-bold mb-2">指導要録自動作成</h2>
   <div class="grid md:grid-cols-2 gap-2">
@@ -236,7 +273,6 @@ html.dark .seat-sel{background:#33202a}
     <div class="card"><h3 class="font-bold mb-1">プレビュー</h3><div id="gPreview" class="text-xs border rounded p-2 min-h-[200px]">児童生徒を選択して「指導要録を自動生成」を押してください。</div></div>
   </div>
 </section>
-
 <section id="sec-grades" class="section hidden">
   <h2 class="text-lg font-bold mb-2">成績管理＋成績分布グラフ</h2>
   <div class="grid md:grid-cols-2 gap-2">
@@ -259,7 +295,6 @@ html.dark .seat-sel{background:#33202a}
     <div class="card"><h3 class="font-bold text-xs mb-1">統計サマリー</h3><div id="statSum"></div></div>
   </div>
 </section>
-
 <section id="sec-iep" class="section hidden">
   <h2 class="text-lg font-bold mb-2">個別指導計画（IEP）テンプレート</h2>
   <div class="grid md:grid-cols-2 gap-2">
@@ -281,7 +316,6 @@ html.dark .seat-sel{background:#33202a}
     </div>
   </div>
 </section>
-
 <section id="sec-timetable" class="section hidden">
   <h2 class="text-lg font-bold mb-2">時間割管理＋授業準備リマインダー</h2>
   <div class="card"><h3 class="font-bold mb-1">週間時間割</h3>
@@ -296,7 +330,6 @@ html.dark .seat-sel{background:#33202a}
     </div>
   </div>
 </section>
-
 <section id="sec-contact" class="section hidden">
   <h2 class="text-lg font-bold mb-2">保護者連絡文例ライブラリ</h2>
   <div class="grid md:grid-cols-2 gap-2">
@@ -314,7 +347,6 @@ html.dark .seat-sel{background:#33202a}
     </div>
   </div>
 </section>
-
 <section id="sec-submit" class="section hidden">
   <h2 class="text-lg font-bold mb-2">提出物・連絡帳管理</h2>
   <div class="grid md:grid-cols-2 gap-2">
@@ -334,7 +366,6 @@ html.dark .seat-sel{background:#33202a}
     </div>
   </div>
 </section>
-
 <section id="sec-letter" class="section hidden">
   <h2 class="text-lg font-bold mb-2">学級通信・おたより作成</h2>
   <div class="grid md:grid-cols-2 gap-2">
@@ -353,7 +384,6 @@ html.dark .seat-sel{background:#33202a}
     </div>
   </div>
 </section>
-
 <section id="sec-students" class="section hidden">
   <h2 class="text-lg font-bold mb-2">児童生徒管理</h2>
   <div class="grid md:grid-cols-2 gap-2">
@@ -368,7 +398,6 @@ html.dark .seat-sel{background:#33202a}
     <div class="card"><h3 class="font-bold mb-1">名簿</h3><div id="stList"></div></div>
   </div>
 </section>
-
 <section id="sec-attendance" class="section hidden">
   <h2 class="text-lg font-bold mb-2">出席簿</h2>
   <div class="card">
@@ -382,7 +411,6 @@ html.dark .seat-sel{background:#33202a}
     <div id="aSummary" class="mt-2 overflow-auto"></div>
   </div>
 </section>
-
 <section id="sec-duties" class="section hidden">
   <h2 class="text-lg font-bold mb-2">係・掃除当番・席替え</h2>
   <div class="card"><button id="duGenBtn" class="btn btn-p">自動生成</button><button id="duRotate" class="btn">🔁 ローテーション</button>
@@ -398,7 +426,6 @@ html.dark .seat-sel{background:#33202a}
     <div id="seatGrid" class="mt-2 overflow-auto"></div>
   </div>
 </section>
-
 <section id="sec-journal" class="section hidden">
   <h2 class="text-lg font-bold mb-2">クラス日誌・週案</h2>
   <div class="grid md:grid-cols-2 gap-2">
@@ -413,7 +440,6 @@ html.dark .seat-sel{background:#33202a}
     <div class="card"><h3 class="font-bold mb-1">週案プレビュー</h3><div id="jWeekPreview" class="text-xs border rounded p-2 min-h-[200px]">週案を生成するとここに表示されます</div></div>
   </div>
 </section>
-
 <section id="sec-event" class="section hidden">
   <h2 class="text-lg font-bold mb-2">授業参観・懇談会</h2>
   <div class="grid md:grid-cols-2 gap-2">
@@ -431,7 +457,6 @@ html.dark .seat-sel{background:#33202a}
     </div>
   </div>
 </section>
-
 <section id="sec-interview" class="section hidden">
   <h2 class="text-lg font-bold mb-2">🗓 面談スケジュール表</h2>
   <div class="card">
@@ -449,7 +474,6 @@ html.dark .seat-sel{background:#33202a}
     <div class="mt-2"><button id="ivPdf" class="btn">PDF出力</button></div>
   </div>
 </section>
-
 <section id="sec-health" class="section hidden">
   <h2 class="text-lg font-bold mb-2">保健室・心の天気</h2>
   <div class="grid md:grid-cols-2 gap-2">
@@ -471,7 +495,6 @@ html.dark .seat-sel{background:#33202a}
     </div>
   </div>
 </section>
-
 <section id="sec-portfolio" class="section hidden">
   <h2 class="text-lg font-bold mb-2">児童生徒ポートフォリオ</h2>
   <div class="card"><select id="pStudent" class="inp"></select>
@@ -483,7 +506,6 @@ html.dark .seat-sel{background:#33202a}
     <button id="pMemoSave" class="btn btn-p mt-1">メモを保存</button>
   </div>
 </section>
-
 <section id="sec-growth" class="section hidden">
   <h2 class="text-lg font-bold mb-2">学級の成長ストーリー</h2>
   <div class="card text-xs">一人ひとりの変化を、学級全体の学習・関係づくり・次の指導へつなげます。観察記録の「成長軸タグ」を使うと精度が上がります。</div>
@@ -492,7 +514,6 @@ html.dark .seat-sel{background:#33202a}
     <div id="grOut" class="mt-2"></div>
   </div>
 </section>
-
 <section id="sec-design" class="section hidden">
   <h2 class="text-lg font-bold mb-2">授業デザイン4.0</h2>
   <div class="card text-xs">「今、この学級とこの生徒に、次にどんな学びを用意するか」を考えるための材料を、既存記録から整理します。<br><b>教師の判断を中心にします。</b>この画面は授業を自動決定するものではありません。実際の生徒の姿を確認し、最終判断は先生が行ってください。</div>
@@ -501,7 +522,6 @@ html.dark .seat-sel{background:#33202a}
     <div id="dsOut" class="mt-2"></div>
   </div>
 </section>
-
 <section id="sec-analysis" class="section hidden">
   <h2 class="text-lg font-bold mb-2">データ分析・早期アラート</h2>
   <div class="card"><button id="anRun" class="btn btn-p">再分析</button>
@@ -513,7 +533,6 @@ html.dark .seat-sel{background:#33202a}
     </div>
   </div>
 </section>
-
 <section id="sec-settings" class="section hidden">
   <h2 class="text-lg font-bold mb-2">設定</h2>
   <div class="card"><h3 class="font-bold mb-1">基本情報</h3>
@@ -526,6 +545,17 @@ html.dark .seat-sel{background:#33202a}
       <div><label class="lbl">年度</label><input id="setYear" class="inp" maxlength="4"></div>
     </div>
     <button id="setSave" class="btn btn-p mt-2">設定を保存</button>
+    <button id="showOnboard" class="btn mt-2">👋 はじめの3ステップを再表示</button>
+  </div>
+  <div class="card"><h3 class="font-bold mb-1">🤖 AI連携（教材から授業案・スライド生成）</h3>
+    <p class="text-xs text-slate-500 mb-1">この機能を使うと、資料ジェネレーターに入力した教材テキスト・画像・PDFが、先生ご自身のAPIキーを通じて<b>外部のAnthropic社のサーバーに送信</b>されます。児童生徒の氏名や個人情報は入力しないでください。APIキーはこの端末のブラウザ内にのみ保存され、当アプリの開発元には送信されません。</p>
+    <label class="lbl">AIプロバイダ</label><select id="aiProvider" class="inp !w-56"><option value="anthropic">Anthropic（Claude）</option><option value="google">Google（Gemini）</option></select>
+    <label class="lbl" id="aiKeyLbl">APIキー</label><input id="aiKey" type="password" class="inp" placeholder="sk-ant-..." autocomplete="off">
+    <label class="lbl">モデル名</label><input id="aiModel" class="inp !w-56" placeholder="claude-sonnet-5">
+    <p id="aiProviderNote" class="text-[10px] text-slate-500 mt-1"></p>
+    <label class="block text-xs mt-2"><input type="checkbox" id="aiConsent" class="mr-1">上記の外部送信について理解し、同意します</label>
+    <div class="mt-2"><button id="aiSave" class="btn btn-p">AI設定を保存</button><button id="aiTest" class="btn">接続テスト</button></div>
+    <div id="aiStatus" class="text-xs mt-1"></div>
   </div>
   <div class="card"><h3 class="font-bold mb-1">プライバシー・安全設定</h3>
     <label class="lbl">画面ロックPIN（4〜12桁・空欄なら変更なし）</label><input id="secPin" type="password" inputmode="numeric" class="inp !w-40" maxlength="12">
@@ -546,19 +576,15 @@ html.dark .seat-sel{background:#33202a}
     <p class="text-xs">児童生徒の氏名・特記事項などの個人情報は、このブラウザ内のlocalStorageに保存されます。誕生日は任意入力です。共用PCではご注意ください。PINを設定すると起動時ロック・暗号化バックアップが有効になります（PINはソルト付きハッシュのみ保存）。ロック中は再読込時もPINが必要です。復元ファイルは自動的にサニタイズされます。定期的なバックアップと、不要になったデータの削除をお願いします。</p>
   </div>
 </section>
-
 </main>
 </div>
-
 <nav class="fixed bottom-0 w-full bg-white/90 backdrop-blur border-t border-purple-100 flex justify-around py-1 md:hidden z-40">
-  <button class="btn" data-nav="dashboard">🏠 ホーム</button><button class="btn" data-nav="material">📖 教材</button><button class="btn" data-nav="letter">📰 通信</button><button class="btn" data-nav="grades">📊 成績</button><button class="btn" data-nav="contact">📞 連絡</button>
+  <button class="btn" data-nav="dashboard">🏠 ホーム</button><button class="btn" data-nav="attendance">✅ 出席</button><button class="btn" data-nav="observe">📷 観察</button><button class="btn" data-nav="submit">📥 提出物</button><button class="btn" data-nav="contact">📞 連絡</button>
 </nav>
-
 <div id="confirmModal" class="hidden fixed inset-0 bg-black/40 z-50 flex items-center justify-center">
   <div class="bg-white rounded-2xl p-6 w-72"><h3 class="font-bold mb-2">確認</h3><p id="confirmMsg" class="mb-4">よろしいですか？</p>
   <div class="flex justify-end gap-2"><button id="confirmYes" class="btn btn-p">はい</button><button id="confirmNo" class="btn">キャンセル</button></div></div>
 </div>
-
 <div id="ttModal" class="hidden fixed inset-0 bg-black/40 z-50 flex items-center justify-center">
   <div class="bg-white rounded-2xl p-6 w-80"><h3 class="font-bold mb-2">授業を追加・編集</h3>
     <label class="lbl">曜日</label><select id="ttDay" class="inp"><option>月</option><option>火</option><option>水</option><option>木</option><option>金</option><option>土</option></select>
@@ -568,7 +594,6 @@ html.dark .seat-sel{background:#33202a}
   </div>
 </div>
 <div id="toast" class="hidden fixed bottom-16 left-1/2 -translate-x-1/2 bg-slate-900/90 text-white text-xs px-4 py-2 rounded-full z-[70]"></div>
-
 <script>
 'use strict';
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
@@ -586,11 +611,15 @@ function toCSV(rows){return '\uFEFF'+rows.map(r=>r.map(csvCell).join(',')).join(
 function cleanHtml(s){return String(s??'').replace(/<(script|iframe|object|embed)[\s\S]*?<\/\1>/gi,'').replace(/<(script|iframe|object|embed)[^>]*>/gi,'').replace(/\son[a-z]+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi,'').replace(/javascript\s*:/gi,'');}
 function sanitizeDB(d){(d.materials||[]).forEach(m=>m.content=cleanHtml(m.content));d.weekly=cleanHtml(d.weekly);
 (d.observations||[]).forEach(o=>{if(o.media&&!/^data:image\/(png|jpeg)/.test(o.media))o.media='';});return d;}
-function defaultDB(){return{settings:{schoolType:'中学校',school:'',teacher:'',grade:'',klass:'',year:'2026'},security:{pinHash:'',salt:'',autoLock:0},meta:{lastBackup:'',checklist:{},drafts:{},onboarded:0,bigFont:0,dark:0},seats:{date:'',cols:6,grid:[]},
+function defaultDB(){return{settings:{schoolType:'中学校',school:'',teacher:'',grade:'',klass:'',year:'2026'},security:{pinHash:'',salt:'',autoLock:0},meta:{lastBackup:'',checklist:{},drafts:{},onboarded:0,bigFont:0,dark:0,filter:{grade:'',klass:''}},ai:{provider:'anthropic',key:'',model:'claude-sonnet-5',consent:0},seats:{date:'',cols:6,grid:[]},
 students:[],materials:[],observations:[],guidance:[],tests:[],ieps:[],timetable:{},prep:{date:'',checks:{}},prepMemo:'',contacts:[],submissions:[],letters:[],attendance:{},duties:{roles:[],cleaning:[],custom:[]},journals:[],weekly:'',events:[],health:[],heart:{},memos:[],interviews:[],reportSaves:[]};}
-function mergeDefault(d){const b=defaultDB(),o={...b,...d};o.settings={...b.settings,...(d.settings||{})};o.security={...b.security,...(d.security||{})};o.meta={...b.meta,...(d.meta||{})};o.duties={...b.duties,...(d.duties||{})};o.seats={...b.seats,...(d.seats||{})};return sanitizeDB(o);}
+function mergeDefault(d){const b=defaultDB(),o={...b,...d};o.settings={...b.settings,...(d.settings||{})};o.security={...b.security,...(d.security||{})};o.meta={...b.meta,...(d.meta||{})};o.ai={...b.ai,...(d.ai||{})};o.duties={...b.duties,...(d.duties||{})};o.seats={...b.seats,...(d.seats||{})};return sanitizeDB(o);}
 let DB;try{DB=mergeDefault(JSON.parse(localStorage.getItem(LS))||{});}catch(e){DB=defaultDB();}
-function save(){try{localStorage.setItem(LS,JSON.stringify(DB));}catch(e){toast('⚠ 保存に失敗（容量超過の可能性）。バックアップ後にデータ削除を検討してください。');}}
+let storageWarned=false;
+function checkStorage(){try{const bytes=((localStorage.getItem(LS))||'').length*2;const pct=bytes/1024/5120*100;
+if(pct>=80&&!storageWarned){storageWarned=true;toast('⚠ データ容量が残りわずかです（約'+Math.round(pct)+'%）。設定画面でバックアップ・不要データの削除をご検討ください。');}
+if(pct<70)storageWarned=false;}catch(e){}}
+function save(){try{localStorage.setItem(LS,JSON.stringify(DB));checkStorage();}catch(e){toast('⚠ 保存に失敗（容量超過の可能性）。バックアップ後にデータ削除を検討してください。');}}
 window.addEventListener('error',e=>toast('⚠ エラー：'+(e.message||'不明')));
 window.addEventListener('unhandledrejection',e=>toast('⚠ 非同期エラー：'+((e.reason&&e.reason.message)||'不明')));
 function toast(m){const t=$('#toast');t.textContent=m;t.classList.remove('hidden');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.add('hidden'),2500);}
@@ -598,10 +627,13 @@ let confirmCb=null;
 function ask(m,cb){$('#confirmMsg').textContent=m;confirmCb=cb;$('#confirmModal').classList.remove('hidden');}
 $('#confirmYes').onclick=()=>{$('#confirmModal').classList.add('hidden');if(confirmCb)confirmCb();};
 $('#confirmNo').onclick=()=>$('#confirmModal').classList.add('hidden');
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){$('#confirmModal').classList.add('hidden');$('#ttModal').classList.add('hidden');$('#gSearchRes').classList.add('hidden');}});
-function printDoc(title,html){const w=window.open('','_blank');if(!w){toast('ポップアップを許可してください');return;}
+function confirmOverwrite(vals,cb){const hasContent=vals.some(v=>v&&String(v).trim());if(hasContent){ask('既存の内容を上書きします。よろしいですか？',cb);}else{cb();}}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){$('#confirmModal').classList.add('hidden');$('#ttModal').classList.add('hidden');$('#gSearchRes').classList.add('hidden');$('#mobileSearchBar').classList.add('hidden');}});
+function printDoc(title,html){
 const sub=(DB.settings.school||DB.settings.teacher)?`<p style="font-size:12px;color:#555">${esc(DB.settings.school||'')} ${esc(DB.settings.teacher||'')}</p>`:'';
-w.document.write(`<html><head><meta charset="utf-8"><title>${esc(title)}</title><style>body{font-family:sans-serif;padding:24px;line-height:1.7;font-size:13px}table{border-collapse:collapse;width:100%}td,th{border:1px solid #333;padding:5px;font-size:12px}h1{font-size:20px}h2{font-size:15px;margin-top:14px}pre{white-space:pre-wrap}</style></head><body><h1>${esc(title)}</h1>${sub}${html}<script>setTimeout(()=>window.print(),300)<\/script></body></html>`);w.document.close();}
+const full=`<!DOCTYPE html><html><head><meta charset="utf-8"><title>${esc(title)}</title><style>body{font-family:sans-serif;padding:24px;line-height:1.7;font-size:13px}table{border-collapse:collapse;width:100%}td,th{border:1px solid #333;padding:5px;font-size:12px}h1{font-size:20px}h2{font-size:15px;margin-top:14px}pre{white-space:pre-wrap}</style></head><body><h1>${esc(title)}</h1>${sub}${html}<script>setTimeout(function(){window.print()},300)<\/script></body></html>`;
+try{const w=window.open('','_blank');if(w){w.document.open();w.document.write(full);w.document.close();return;}}catch(e){}
+download(full,title.replace(/[\\/:*?"<>|]/g,'_')+'.html','text/html');toast('ポップアップ不可のため印刷用HTMLを保存しました。開いて印刷してください。');}
 function copyText(t){if(!t){toast('コピーする内容がありません');return;}if(navigator.clipboard){navigator.clipboard.writeText(t).then(()=>toast('コピーしました'));}else{const ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();toast('コピーしました');}}
 function download(text,name,type='application/json'){const blob=new Blob([text],{type});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000);}
 async function sha(t){try{if(crypto&&crypto.subtle){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(t));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('');}}catch(e){}let h=0;for(const c of('s'+t)){h=(h*31+c.charCodeAt(0))|0;}return 'f'+h;}
@@ -652,38 +684,53 @@ const pin=prompt('復元用PINを入力');if(pin==null)return;
 try{const key=await aesKey(pin,j.salt);const pt=await crypto.subtle.decrypt({name:'AES-GCM',iv:unb64(j.iv)},key,unb64(j.data));
 DB=mergeDefault(JSON.parse(new TextDecoder().decode(pt)));save();init();toast('復元しました（サニタイズ済）');}catch(err){toast('復元失敗（PIN違いまたは破損）');}e.target.value='';};
 let filter={grade:'',klass:''},current='dashboard';
-const NAV=[['dashboard','🏠 ダッシュボード'],['material','📖 授業案ジェネレーター'],['observe','📷 観察記録＋評価文案'],['report','📝 通知表コメント生成'],['guidance','📋 指導要録作成'],['grades','📊 成績管理＋グラフ'],['iep','🎯 IEPテンプレート'],['timetable','🕐 時間割＆準備'],['contact','📞 保護者連絡文例'],['submit','📥 提出物・連絡帳'],['letter','📰 学級通信・おたより'],['students','🧑 児童生徒管理'],['attendance','✅ 出席簿'],['duties','🧹 係・掃除・席替え'],['journal','📒 クラス日誌・週案'],['event','🏫 授業参観・懇談会'],['interview','🗓 面談スケジュール'],['health','💗 保健室・心の天気'],['portfolio','📁 ポートフォリオ'],['growth','🌱 学級の成長ストーリー'],['design','🧭 授業デザイン4.0'],['analysis','📈 データ分析'],['settings','⚙️ 設定']];
+const NAV=[['dashboard','🏠 ダッシュボード'],['material','📖 授業案ジェネレーター'],['aigen','🧪 資料から授業設計（AI）'],['observe','📷 観察記録＋評価文案'],['report','📝 通知表コメント生成'],['guidance','📋 指導要録作成'],['grades','📊 成績管理＋グラフ'],['iep','🎯 IEPテンプレート'],['timetable','🕐 時間割＆準備'],['contact','📞 保護者連絡文例'],['submit','📥 提出物・連絡帳'],['letter','📰 学級通信・おたより'],['students','🧑 児童生徒管理'],['attendance','✅ 出席簿'],['duties','🧹 係・掃除・席替え'],['journal','📒 クラス日誌・週案'],['event','🏫 授業参観・懇談会'],['interview','🗓 面談スケジュール'],['health','💗 保健室・心の天気'],['portfolio','📁 ポートフォリオ'],['growth','🌱 学級の成長ストーリー'],['design','🧭 授業デザイン4.0'],['analysis','📈 データ分析'],['settings','⚙️ 設定']];
+const NAV_GROUPS=[['morning','🌅 朝の業務',['dashboard','attendance','health','timetable']],['prep','📚 授業準備',['material','aigen','observe','journal','submit']],['eval','📝 評価・記録',['report','guidance','grades','iep','portfolio','growth','design']],['contactg','📞 保護者連絡',['contact','letter','event','interview']],['class','🧑\u200d🤝\u200d🧑 クラス運営',['students','duties']],['other','⚙️ 分析・設定',['analysis','settings']]];
+let openGroups=new Set(['morning']);
+function navGroupOf(id){const g=NAV_GROUPS.find(x=>x[2].includes(id));return g?g[0]:null;}
 function buildNav(){const overdue=DB.submissions.filter(s=>s.due<todayStr()&&submitStudents(s).some(x=>!s.status[x.id])).length;
 const watch=watchList().length;
-$('#sideNav').innerHTML=NAV.map(n=>{let b='';
-if(n[0]==='submit'&&overdue)b=`<span class="chip chip-warn">${overdue}</span>`;
-if(n[0]==='analysis'&&watch)b=`<span class="chip chip-warn">${watch}</span>`;
-return `<button class="nav-btn ${current===n[0]?'active':''}" data-nav="${n[0]}"><span class="flex-1">${n[1]}</span>${b}</button>`;}).join('');}
+const cg=navGroupOf(current);if(cg)openGroups.add(cg);
+$('#sideNav').innerHTML=NAV_GROUPS.map(([gid,label,ids])=>{
+const open=openGroups.has(gid);
+const body=ids.map(id=>{const n=NAV.find(x=>x[0]===id);let b='';
+if(id==='submit'&&overdue)b=`<span class="chip chip-warn">${overdue}</span>`;
+if(id==='analysis'&&watch)b=`<span class="chip chip-warn">${watch}</span>`;
+return `<button class="nav-btn ${current===id?'active':''}" data-nav="${id}"><span class="flex-1">${n[1]}</span>${b}</button>`;}).join('');
+return `<div class="nav-group mb-1"><button class="nav-group-h flex items-center justify-between w-full text-left px-2 py-1 text-[11px] font-bold text-slate-500" data-navgroup="${gid}"><span>${label}</span><span>${open?'▾':'▸'}</span></button><div class="${open?'':'hidden'}">${body}</div></div>`;
+}).join('');}
 let stream=null,rec=null,camShot=null;
 function stopMedia(){if(stream){stream.getTracks().forEach(t=>t.stop());stream=null;}if(rec){try{rec.stop();}catch(e){}rec=null;}}
 function go(id){stopMedia();current=id;$$('.section').forEach(s=>s.classList.toggle('hidden',s.id!=='sec-'+id));render(id);}
-document.addEventListener('click',e=>{const b=e.target.closest('[data-nav]');if(b)go(b.dataset.nav);});
+document.addEventListener('click',e=>{const gh=e.target.closest('[data-navgroup]');if(gh){const gid=gh.dataset.navgroup;if(openGroups.has(gid))openGroups.delete(gid);else openGroups.add(gid);buildNav();return;}
+const b=e.target.closest('[data-nav]');if(b)go(b.dataset.nav);});
 $('#menuBtn').onclick=()=>$('#sidebar').classList.toggle('hidden');
 function filteredStudents(){return DB.students.filter(s=>(!filter.grade||s.grade===filter.grade)&&(!filter.klass||s.klass===filter.klass));}
 const sName=id=>(DB.students.find(s=>s.id===id)||{}).name||'(削除済み)';
 function gradeOptions(all){let o=all?'<option value="">すべて</option>':'';for(let g=1;g<=6;g++)o+=`<option>${g}年</option>`;return o;}
 function classOptions(all){let o=all?'<option value="">すべて</option>':'';for(let k=1;k<=6;k++)o+=`<option>${k}組</option>`;return o;}
 $('#fGrade').innerHTML='<option value="">すべての学年</option>'+gradeOptions(false);$('#fClass').innerHTML='<option value="">すべてのクラス</option>'+classOptions(false);
-['mGrade','stGrade'].forEach(id=>$('#'+id).innerHTML=gradeOptions(false));
+['mGrade','stGrade','aiGrade'].forEach(id=>$('#'+id).innerHTML=gradeOptions(false));
 $('#stClass').innerHTML=classOptions(false);
 $('#setGrade').innerHTML='<option value="">未設定</option>'+gradeOptions(false);$('#setClass').innerHTML='<option value="">未設定</option>'+classOptions(false);
 ['grGrade','dsGrade'].forEach(id=>$('#'+id).innerHTML=gradeOptions(true));
 ['grClass','dsClass'].forEach(id=>$('#'+id).innerHTML=classOptions(true));
-$('#fGrade').onchange=e=>{filter.grade=e.target.value;render(current);};
-$('#fClass').onchange=e=>{filter.klass=e.target.value;render(current);};
-$('#fClear').onclick=()=>{filter={grade:'',klass:''};$('#fGrade').value='';$('#fClass').value='';render(current);};
-$('#gSearch').addEventListener('input',e=>{const q=e.target.value.trim();const res=$('#gSearchRes');
+$('#fGrade').onchange=e=>{filter.grade=e.target.value;DB.meta.filter={grade:filter.grade,klass:filter.klass};save();render(current);};
+$('#fClass').onchange=e=>{filter.klass=e.target.value;DB.meta.filter={grade:filter.grade,klass:filter.klass};save();render(current);};
+$('#fClear').onclick=()=>{filter={grade:'',klass:''};DB.meta.filter={grade:'',klass:''};save();$('#fGrade').value='';$('#fClass').value='';render(current);};
+function bindSearch(inputSel,resSel){
+$(inputSel).addEventListener('input',e=>{const q=e.target.value.trim();const res=$(resSel);
 if(!q){res.classList.add('hidden');return;}
 const m=DB.students.filter(s=>s.name.includes(q)).slice(0,6);
 res.innerHTML=m.length?m.map(s=>`<button class="block w-full text-left text-xs px-3 py-2 hover:bg-purple-50 g-res" data-id="${s.id}">${esc(s.name)} <span class="chip">${s.grade} ${s.klass}</span></button>`).join(''):'<div class="text-xs px-3 py-2 text-slate-500">該当なし</div>';
 res.classList.remove('hidden');});
-$('#gSearchRes').addEventListener('click',e=>{const b=e.target.closest('.g-res');if(!b)return;$('#gSearch').value='';$('#gSearchRes').classList.add('hidden');go('portfolio');$('#pStudent').value=b.dataset.id;renderPortfolio();});
-document.addEventListener('click',e=>{if(!e.target.closest('#gSearch')&&!e.target.closest('#gSearchRes'))$('#gSearchRes').classList.add('hidden');});
+$(resSel).addEventListener('click',e=>{const b=e.target.closest('.g-res');if(!b)return;$(inputSel).value='';$(resSel).classList.add('hidden');$('#mobileSearchBar')?.classList.add('hidden');go('portfolio');$('#pStudent').value=b.dataset.id;renderPortfolio();});
+}
+bindSearch('#gSearch','#gSearchRes');
+bindSearch('#gSearchMobile','#gSearchResMobile');
+document.addEventListener('click',e=>{if(!e.target.closest('#gSearch')&&!e.target.closest('#gSearchRes'))$('#gSearchRes').classList.add('hidden');
+if(!e.target.closest('#mobileSearchBar')&&!e.target.closest('#searchToggle'))$('#mobileSearchBar').classList.add('hidden');});
+$('#searchToggle').onclick=()=>{$('#mobileSearchBar').classList.toggle('hidden');if(!$('#mobileSearchBar').classList.contains('hidden'))$('#gSearchMobile').focus();};
 function refreshStudentSelects(){const opts=filteredStudents().map(s=>`<option value="${s.id}">${esc(s.name)}</option>`).join('')||'<option value="">（未登録）</option>';
 ['oStudent','gStudent','iStudent','cStudent','hStudent','heartStudent','pStudent'].forEach(id=>{const el=$('#'+id);if(!el)return;const v=el.value;el.innerHTML=opts;el.value=v;});
 const combos=[...new Set(DB.students.map(s=>s.grade+'・'+s.klass))];
@@ -696,7 +743,7 @@ function restoreDrafts(){DRAFT_IDS.forEach(id=>{const v=(DB.meta.drafts||{})[id]
 window.addEventListener('pagehide',()=>{DB.meta.drafts=DB.meta.drafts||{};DRAFT_IDS.forEach(id=>{const el=$('#'+id);if(el)DB.meta.drafts[id]=el.value;});try{localStorage.setItem(LS,JSON.stringify(DB));}catch(e){}});
 function applyFont(){document.documentElement.classList.toggle('bigfont',!!DB.meta.bigFont);}
 $('#fontBtn').onclick=()=>{DB.meta.bigFont=DB.meta.bigFont?0:1;save();applyFont();toast(DB.meta.bigFont?'文字サイズ：大':'文字サイズ：標準');};
-function applyDark(){document.documentElement.classList.toggle('dark',!!DB.meta.dark);$('#darkBtn').textContent=DB.meta.dark?'☀️':'🌙';}
+function applyDark(){document.documentElement.classList.toggle('dark',!!DB.meta.dark);$('#darkBtn').textContent=DB.meta.dark?'☀️':'';}
 $('#darkBtn').onclick=()=>{DB.meta.dark=DB.meta.dark?0:1;save();applyDark();toast(DB.meta.dark?'ダークモード：オン':'ダークモード：オフ');};
 function submitStudents(s){if(s.target==='all'||!s.target)return DB.students;const[g,k]=(s.target||'').split('・');return DB.students.filter(x=>x.grade===g&&x.klass===k);}
 function attendanceRate(sid){let p=0,n=0;for(const d in DB.attendance){const v=DB.attendance[d][sid];if(v){n++;if(v!=='欠席')p++;}}return n?Math.round(p/n*100):100;}
@@ -739,6 +786,7 @@ const d2=DB.submissions.filter(s=>s.due===t);
 $('#dToday').innerHTML=d2.length?d2.map(s=>`<div class="text-xs border-b py-1">${esc(s.content)}（未提出 ${submitStudents(s).filter(x=>!s.status[x.id]).length} 名）</div>`).join(''):'<p class="text-xs">今日の提出物はありません。</p>';}
 $('#dChecklist').addEventListener('change',e=>{DB.meta.checklist.items[e.target.dataset.i]=e.target.checked;save();});
 $('#dWelcomeClose').onclick=()=>{DB.meta.onboarded=1;save();$('#dWelcome').classList.add('hidden');};
+$('#showOnboard').onclick=()=>{DB.meta.onboarded=0;save();go('dashboard');$('#dWelcome').classList.remove('hidden');};
 let pickTimer=null;
 $('#pickBtn').onclick=()=>{const st=filteredStudents();if(!st.length){toast('生徒を登録してください');return;}
 clearInterval(pickTimer);let i=0;const total=12+st.length;
@@ -778,7 +826,8 @@ dz.addEventListener('dragleave',()=>dz.classList.remove('ring'));
 dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('ring');const f=e.dataTransfer.files[0];if(f)$('#oFileName').textContent='選択中：'+f.name;});
 $('#oFile').onchange=e=>{$('#oFileName').textContent=e.target.files[0]?'選択中：'+e.target.files[0].name:'';};
 $('#oGenBtn').onclick=()=>{const n=sName($('#oStudent').value),t=$('#oText').value.trim();
-$('#oEval').value=`${n}さんは、${$('#oType').value}において、${t?`「${t.slice(0,60)}」と見られるように、`:''}自分なりに考え、取り組む姿が見られた。今後も小さな伸びを具体的に認め、自己肯定感につながる声かけを継続していきたい。`;toast('評価文案を作成しました');};
+const gen=()=>{$('#oEval').value=`${n}さんは、${$('#oType').value}において、${t?`「${t.slice(0,60)}」と見られるように、`:''}自分なりに考え、取り組む姿が見られた。今後も小さな伸びを具体的に認め、自己肯定感につながる声かけを継続していきたい。`;toast('評価文案を作成しました');};
+confirmOverwrite([$('#oEval').value],gen);};
 $('#oSaveBtn').onclick=()=>{const sid=$('#oStudent').value;if(!sid){toast('児童生徒を登録してください');return;}
 DB.observations.push({id:uid(),studentId:sid,type:$('#oType').value,axis:$('#oAxis').value,date:$('#oDate').value||todayStr(),text:$('#oText').value,evalText:$('#oEval').value,media:camShot,fileName:$('#oFileName').textContent});
 save();camShot=null;$('#oText').value='';$('#oEval').value='';$('#oFileName').textContent='';clearDraft('oText');renderObserve();toast('記録を保存しました');};
@@ -806,12 +855,13 @@ else if(b.classList.contains('r-pdf')){printDoc('通知表コメント '+r.term,
 else{$('#rOut').innerHTML=r.items.map(it=>`<div class="border rounded p-2"><b class="text-xs">${esc(sName(it.studentId))}</b><textarea class="inp r-item" data-id="${it.studentId}" rows="3">${esc(it.text)}</textarea></div>`).join('');toast('保存版を読み込みました');}};
 let gCurrent=null;
 $('#gGenBtn').onclick=()=>{const sid=$('#gStudent').value;if(!sid){toast('児童生徒を選択してください');return;}const s=DB.students.find(x=>x.id===sid);
-$('#gLearn').value=`各教科において、${s.name}さんなりに着実に取り組んでいる。特に興味・関心をもつ分野では、進んで課題を探求する姿が見られる。`;
+const gen=()=>{$('#gLearn').value=`各教科において、${s.name}さんなりに着実に取り組んでいる。特に興味・関心をもつ分野では、進んで課題を探求する姿が見られる。`;
 $('#gBehavior').value=`出席率は${attendanceRate(sid)}%。生活面ではルールを守り、友達と穏やかに関わる姿が見られる。`;
 const du=DB.duties.roles.filter(r=>r.members.includes(sid)).map(r=>r.name);
 $('#gActivities').value=du.length?`${du.join('、')}として、集団のために活動した。`:'係活動等において、与えられた役割を果たした。';
 $('#gSummary').value=`観察記録${DB.observations.filter(o=>o.studentId===sid).length}件を踏まえると、一年間で確かな成長が見られた。今後は、自分の考えを自信をもって表現する力を伸ばしてほしい。`;
 gCurrent=sid;renderGuidancePreview();};
+confirmOverwrite([$('#gLearn').value,$('#gBehavior').value,$('#gActivities').value,$('#gSummary').value],gen);};
 function renderGuidancePreview(){if(!gCurrent)return;$('#gPreview').innerHTML=`<h2 class="font-bold">指導要録（${esc($('#gYear').value)}年度）</h2><p><b>${esc(sName(gCurrent))}</b></p><h3 class="font-bold">学習状況</h3><p>${esc($('#gLearn').value)}</p><h3 class="font-bold">行動・出席</h3><p>${esc($('#gBehavior').value)}</p><h3 class="font-bold">特別活動</h3><p>${esc($('#gActivities').value)}</p><h3 class="font-bold">総合所見</h3><p>${esc($('#gSummary').value)}</p>`;}
 ['gLearn','gBehavior','gActivities','gSummary'].forEach(id=>$('#'+id).addEventListener('input',renderGuidancePreview));
 $('#gSaveBtn').onclick=()=>{if(!gCurrent){toast('先に生成してください');return;}DB.guidance=DB.guidance.filter(g=>!(g.studentId===gCurrent&&g.year===$('#gYear').value));
@@ -869,9 +919,10 @@ $('#ttDelete').onclick=()=>{delete DB.timetable[$('#ttDay').value+'-'+$('#ttPeri
 $('#ttCancel').onclick=()=>$('#ttModal').classList.add('hidden');
 $('#ttReset').onclick=()=>ask('時間割をリセットしますか？',()=>{DB.timetable={};save();renderTimetable();});
 $('#cGenBtn').onclick=()=>{const n=sName($('#cStudent').value),tone=$('#cTone').value,ex=$('#cExtra').value,scene=$('#cScene').value;
-const open=tone==='やわらかい'?'いつもお子さまの様子をお知らせいただき、ありがとうございます。':tone==='心配・共感'?'このたびはご心配をおかけしております。':'いつも教育活動へのご理解・ご協力をいただき、ありがとうございます。';
+const gen=()=>{const open=tone==='やわらかい'?'いつもお子さまの様子をお知らせいただき、ありがとうございます。':tone==='心配・共感'?'このたびはご心配をおかけしております。':'いつも教育活動へのご理解・ご協力をいただき、ありがとうございます。';
 const body={'欠席連絡（安否確認）':`本日${n}さんがお休みですが、ご連絡が取れておりません。ご都合がよろしければ、ご一報いただけますと幸いです。`,'忘れ物・持ち物の確認':`${n}さんの持ち物について確認させていただきたくご連絡いたしました。${ex||'明日の持ち物について、ご家庭でもご確認いただけますと幸いです。'}`,'よい出来事の報告':`本日、${n}さんの素晴らしい姿がありましたのでご連絡いたしました。${ex||'クラスの皆の前で発表し、大きな拍手を受けました。'}`,'体調の心配・共感':`${n}さんの体調について伺い、心配しております。${ex||'無理をなさらず、ゆっくり休養いただけますようお願いいたします。'}`,'規律に関するお願い':`${n}さんの学校での様子について、ご相談させていただきたくご連絡いたしました。${ex||'ご家庭でもお話し合っていただけますと幸いです。'}`,'行事・日程のお知らせ':`今後の行事予定につきましてご案内申し上げます。${ex||'詳細は別途おたよりをご確認ください。'}`}[scene];
 $('#cOut').value=`【${scene}】\n${n}さん 保護者様\n\n${open}\n${body}\n\n${tone==='やや厳しい'?'ご家庭でのご指導・ご協力をよろしくお願いいたします。':'引き続き、ご理解とご協力をよろしくお願いいたします。'}\n${DB.settings.school||''} ${DB.settings.teacher||''}`;toast('生成しました');};
+confirmOverwrite([$('#cOut').value],gen);};
 $('#cCopy').onclick=()=>copyText($('#cOut').value);
 $('#cClear').onclick=()=>{$('#cOut').value='';clearDraft('cOut');};
 $('#cSave').onclick=()=>{if(!$('#cOut').value){toast('文面がありません');return;}DB.contacts.push({id:uid(),scene:$('#cScene').value,student:$('#cStudent').value,text:$('#cOut').value,date:todayStr()});save();clearDraft('cOut');renderContact();toast('保存しました');};
@@ -900,7 +951,7 @@ $('#lPdf').onclick=()=>printDoc($('#lTitle').value||'学級通信',`<pre>${esc($
 function renderLetter(){$('#lList').innerHTML=DB.letters.length?DB.letters.map(l=>`<div class="text-xs border-b py-1 flex gap-2"><span class="flex-1">${l.date} ${esc(l.title)}</span><button class="btn l-load" data-id="${l.id}">表示</button><button class="btn btn-d l-del" data-id="${l.id}">削除</button></div>`).join(''):'<p class="text-xs">なし</p>';}
 $('#lList').onclick=e=>{const b=e.target.closest('button');if(!b)return;const l=DB.letters.find(x=>x.id===b.dataset.id);if(!l)return;
 if(b.classList.contains('l-del'))ask('削除しますか？',()=>{DB.letters=DB.letters.filter(x=>x.id!==l.id);save();renderLetter();});
-else{$('#lBody').value=l.body;$('#lTitle').value=l.title;$('#lDate').value=l.date;}};
+else{$('#lBody').value=l.body;$('#lTitle').value=l.title;$('#lDate').value=l.date;}}
 let stEdit=null;
 $('#stRegBtn').onclick=()=>{const n=$('#stName').value.trim();if(!n){toast('氏名を入力してください');return;}
 if(stEdit){Object.assign(DB.students.find(x=>x.id===stEdit),{name:n,grade:$('#stGrade').value,klass:$('#stClass').value,note:$('#stNote').value,bday:$('#stBday').value});toast('更新しました');}
@@ -940,7 +991,7 @@ $('#duCustomAdd').onclick=()=>{const n=$('#duCustomName').value.trim();if(!n)ret
 let seatSel=null;
 function renderSeats(){const s=DB.seats;const edit=$('#seatEdit').checked;
 if(!s||!s.grid||!s.grid.length){$('#seatGrid').innerHTML='<p class="text-xs">未生成</p>';return;}
-$('#seatGrid').innerHTML='<table class="tbl mt-1">'+s.grid.map((r,ri)=>'<tr>'+r.map((id,ci)=>`<td class="${edit?'seat-cell':''} ${seatSel&&seatSel[0]===ri&&seatSel[1]===ci?'seat-sel':''}" data-rc="${ri},${ci}">${id?esc(sName(id)):'　'}</td>`).join('')+'</tr>').join('')+'</table><p class="text-[10px] text-slate-500 mt-1">生成日：${s.date} ／ ${s.cols}列（前方＝表の上側）${edit?' ／ 手動調整中：2マスクリックで入替':''}</p>';}
+$('#seatGrid').innerHTML='<table class="tbl mt-1">'+s.grid.map((r,ri)=>'<tr>'+r.map((id,ci)=>`<td class="${edit?'seat-cell':''} ${seatSel&&seatSel[0]===ri&&seatSel[1]===ci?'seat-sel':''}" data-rc="${ri},${ci}">${id?esc(sName(id)):'　'}</td>`).join('')+'</tr>').join('')+`</table><p class="text-[10px] text-slate-500 mt-1">生成日：${s.date} ／ ${s.cols}列（前方＝表の上側）${edit?' ／ 手動調整中：2マスクリックで入替':''}</p>`;}
 $('#seatEdit').onchange=()=>{seatSel=null;renderSeats();};
 $('#seatGrid').onclick=e=>{if(!$('#seatEdit').checked)return;const c=e.target.closest('.seat-cell');if(!c)return;
 const[r,i]=c.dataset.rc.split(',').map(Number);const g=DB.seats.grid;
@@ -958,7 +1009,7 @@ return `<div class="text-xs border-b py-1"><b>${esc(r.name)}</b>：${r.members.m
 $('#duClean').innerHTML=(DB.duties.cleaning||[]).length?DB.duties.cleaning.map(r=>`<div class="text-xs border-b py-1"><b>${esc(r.name)}</b>：${r.members.map(m=>esc(sName(m))).join('、')}</div>`).join(''):'<p class="text-xs">未生成</p>';
 renderSeats();}
 $('#duRoles').onclick=e=>{const b=e.target.closest('.du-del');if(!b)return;ask('削除しますか？',()=>{const arr=DB.duties[b.dataset.t]||[];arr.splice(+b.dataset.i,1);save();renderDuties();});};
-$('#jAuto').onclick=()=>{const d=todayStr();const att=DB.attendance[d]||{};const st=filteredStudents();
+$('#jAuto').onclick=()=>{const gen=()=>{const d=todayStr();const att=DB.attendance[d]||{};const st=filteredStudents();
 const abs=st.filter(s=>att[s.id]==='欠席').map(s=>s.name);const late=st.filter(s=>att[s.id]==='遅刻').length;
 const h=DB.heart[d]||{};const hc={};st.forEach(s=>{const v=h[s.id];if(v)hc[v]=(hc[v]||0)+1;});
 const due=DB.submissions.filter(x=>x.due===d).map(x=>x.content);
@@ -966,6 +1017,7 @@ let t=`出席：${st.length-abs.length}/${st.length}名`;if(abs.length)t+=`（�
 t+='心の天気：'+(Object.entries(hc).map(([k,v])=>`${k}${v}`).join(' ')||'記録なし')+'。\n';
 t+=due.length?`本日期限：${due.join('、')}。`:'本日期限の提出物なし。';
 $('#jText').value=t;toast('日誌の下書きを作成しました');};
+confirmOverwrite([$('#jText').value],gen);};
 $('#jSave').onclick=()=>{if(!$('#jText').value.trim()){toast('日誌を入力してください');return;}DB.journals.push({id:uid(),date:$('#jDate').value||todayStr(),text:$('#jText').value});save();$('#jText').value='';renderJournal();toast('保存しました');};
 $('#jWeekBtn').onclick=()=>{let h='<table class="tbl"><tr><th>曜日</th><th>授業</th><th>ねらい・ポイント</th></tr>';
 DAYS.forEach(d=>{h+=`<tr><td>${d}</td><td>${esc(PERIODS.map(p=>(DB.timetable[d+'-'+p]||{}).subject).filter(Boolean).join('、'))||'—'}</td><td>${esc(pick(['主体的な学びを引き出す声かけを意識する。','個別支援の時間を意識的につくる。','振り返りを共有し、次時につなげる。']))}</td></tr>`;});
@@ -1107,6 +1159,176 @@ DB.tests=DB.tests.filter(t=>!t.demo);DB.submissions=DB.submissions.filter(s=>!s.
 for(const d in DB.heart){dids.forEach(id=>delete DB.heart[d][id]);}
 save();refreshStudentSelects();render(current);toast('デモデータを削除しました');});
 $('#setSave').onclick=()=>{DB.settings={schoolType:$('#setSchoolType').value,school:$('#setSchool').value,teacher:$('#setTeacher').value,grade:$('#setGrade').value,klass:$('#setClass').value,year:String(Math.min(Math.max(+$('#setYear').value||2026,2000),2100))};save();toast('設定を保存しました');};
+const AI_DEFAULTS={anthropic:{model:'claude-sonnet-5',keyPh:'sk-ant-...',note:'Anthropic社のAPIキー（console.anthropic.com で取得）。新規アカウントには少額の無料クレジットが付与されます。'},google:{model:'gemini-2.5-flash',keyPh:'AIza...',note:'Google AI StudioのAPIキー（aistudio.google.com で取得）。gemini-2.5-flashなど一部モデルは無料枠があります（回数制限あり）。'}};
+function renderAiSettings(){$('#aiProvider').value=DB.ai.provider||'anthropic';$('#aiKey').value=DB.ai.key||'';$('#aiModel').value=DB.ai.model||AI_DEFAULTS[DB.ai.provider||'anthropic'].model;$('#aiConsent').checked=!!DB.ai.consent;updateAiProviderUI();}
+function updateAiProviderUI(){const p=$('#aiProvider').value;const d=AI_DEFAULTS[p];$('#aiKeyLbl').textContent=(p==='google'?'Google':'Anthropic')+' APIキー';$('#aiKey').placeholder=d.keyPh;$('#aiProviderNote').textContent=d.note;
+if(!$('#aiModel').value.trim()||Object.values(AI_DEFAULTS).some(x=>x.model===$('#aiModel').value.trim()))$('#aiModel').value=d.model;}
+$('#aiProvider').onchange=updateAiProviderUI;
+$('#aiSave').onclick=()=>{if($('#aiKey').value.trim()&&!$('#aiConsent').checked){toast('外部送信への同意チェックが必要です');return;}
+const p=$('#aiProvider').value;
+DB.ai={provider:p,key:$('#aiKey').value.trim(),model:$('#aiModel').value.trim()||AI_DEFAULTS[p].model,consent:$('#aiConsent').checked?1:0};save();toast('AI設定を保存しました');};
+
+function blocksToAnthropicContent(blocks){return blocks.map(b=>{
+if(b.kind==='text')return{type:'text',text:b.text};
+if(b.kind==='image')return{type:'image',source:{type:'base64',media_type:b.mime,data:b.data}};
+if(b.kind==='pdf')return{type:'document',source:{type:'base64',media_type:'application/pdf',data:b.data}};
+return{type:'text',text:''};});}
+function blocksToGeminiParts(blocks){return blocks.map(b=>{
+if(b.kind==='text')return{text:b.text};
+if(b.kind==='image')return{inline_data:{mime_type:b.mime,data:b.data}};
+if(b.kind==='pdf')return{inline_data:{mime_type:'application/pdf',data:b.data}};
+return{text:''};});}
+async function callClaude(blocks,{maxTokens=4096,system=''}={}){
+const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'content-type':'application/json','x-api-key':DB.ai.key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+body:JSON.stringify({model:DB.ai.model||'claude-sonnet-5',max_tokens:maxTokens,system:system||undefined,messages:[{role:'user',content:blocksToAnthropicContent(blocks)}]})});
+if(!res.ok){let msg='';try{msg=(await res.json()).error?.message||'';}catch(e){}throw new Error('APIエラー（'+res.status+'）'+msg);}
+const data=await res.json();
+return (data.content||[]).filter(c=>c.type==='text').map(c=>c.text).join('\n');}
+async function callGemini(blocks,{maxTokens=4096,system=''}={}){
+const model=DB.ai.model||'gemini-2.5-flash';
+const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`,{method:'POST',headers:{'content-type':'application/json','x-goog-api-key':DB.ai.key},
+body:JSON.stringify({system_instruction:system?{parts:[{text:system}]}:undefined,contents:[{role:'user',parts:blocksToGeminiParts(blocks)}],generationConfig:{maxOutputTokens:maxTokens}})});
+if(!res.ok){let msg='';try{msg=(await res.json()).error?.message||'';}catch(e){}throw new Error('APIエラー（'+res.status+'）'+msg);}
+const data=await res.json();
+const parts=(data.candidates?.[0]?.content?.parts)||[];
+return parts.map(p=>p.text||'').join('\n');}
+async function callAI(blocks,opts={}){
+if(!DB.ai.key||!DB.ai.consent)throw new Error('APIキー未設定、または外部送信への同意がありません（設定画面で行ってください）');
+if(DB.ai.provider==='google')return callGemini(blocks,opts);
+return callClaude(blocks,opts);}
+$('#aiTest').onclick=async()=>{$('#aiStatus').textContent='接続確認中...';
+try{const r=await callAI([{kind:'text',text:'「OK」とだけ返答してください。'}]);$('#aiStatus').innerHTML='<span class="text-emerald-600">✅ 接続成功：'+esc(r.slice(0,30))+'</span>';}
+catch(e){$('#aiStatus').innerHTML='<span class="text-rose-600">⚠ '+esc(e.message)+'（file://で開いている場合、ブラウザのCORS制限で失敗することがあります。うまくいかない場合はローカルサーバー経由で開くと解決することがあります）</span>';}};
+
+
+/* ===== 資料から授業設計（AI） ===== */
+let aiSources=[],aiLastResult=null;
+function fileToBase64(f){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result.split(',')[1]);r.onerror=rej;r.readAsDataURL(f);});}
+function fileToText(f){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsText(f);});}
+function cleanSubtitle(text){return text.replace(/\r/g,'').split('\n').filter(l=>!/^\d+$/.test(l.trim())&&!/^\d{2}:\d{2}:\d{2}[.,]\d{3}\s*-->/.test(l.trim())&&!/^WEBVTT/.test(l.trim())).join(' ').replace(/\s+/g,' ').trim();}
+function renderAiSourceList(){$('#aiSourceList').innerHTML=aiSources.length?aiSources.map((s,i)=>`<div class="flex items-center justify-between border-b py-1"><span>${s.icon} ${esc(s.name)}<span class="chip ml-1">${s.kind}</span></span><button class="text-rose-500 text-xs" data-airm="${i}">✕削除</button></div>`).join(''):'<div class="text-slate-400">まだ資料がありません</div>';}
+$('#aiSourceList').addEventListener('click',e=>{const b=e.target.closest('[data-airm]');if(!b)return;aiSources.splice(+b.dataset.airm,1);renderAiSourceList();});
+$('#aiFilePick').addEventListener('change',async e=>{for(const f of e.target.files){try{
+if(f.type==='application/pdf'){const b64=await fileToBase64(f);aiSources.push({name:f.name,kind:'PDF',icon:'📄',block:{kind:'pdf',data:b64}});}
+else if(f.name.match(/\.docx?$/i)){if(!window.mammoth){toast('Word読み込みライブラリが読み込めませんでした（ネット接続をご確認ください）');continue;}const buf=await f.arrayBuffer();const r=await mammoth.extractRawText({arrayBuffer:buf});aiSources.push({name:f.name,kind:'Word',icon:'📝',block:{kind:'text',text:`【${f.name}】\n${r.value}`}});}
+else if(f.type.startsWith('image/')){const b64=await fileToBase64(f);aiSources.push({name:f.name,kind:'画像',icon:'🖼️',block:{kind:'image',mime:f.type,data:b64}});}
+else{toast(f.name+'：対応していない形式です');}
+}catch(err){toast(f.name+'の読み込みに失敗：'+err.message);}}
+renderAiSourceList();e.target.value='';});
+$('#aiTransPick').addEventListener('change',async e=>{for(const f of e.target.files){try{const raw=await fileToText(f);const clean=/\.(srt|vtt)$/i.test(f.name)?cleanSubtitle(raw):raw;
+aiSources.push({name:f.name,kind:'文字起こし',icon:'🎬',block:{kind:'text',text:`【${f.name}（動画の文字起こし）】\n${clean.slice(0,20000)}`}});}catch(err){toast(f.name+'の読み込みに失敗：'+err.message);}}
+renderAiSourceList();e.target.value='';});
+$('#aiPasteAdd').onclick=()=>{const t=$('#aiPasteText').value.trim();if(!t){toast('テキストを入力してください');return;}
+aiSources.push({name:'貼り付けテキスト('+t.slice(0,15)+'…)',kind:'テキスト',icon:'✏️',block:{kind:'text',text:t}});$('#aiPasteText').value='';renderAiSourceList();};
+function renderAigen(){renderAiSourceList();}
+
+function aiSystemPrompt(){return `あなたは日本の学校教員の授業準備を支援するアシスタントです。与えられた資料（教科書・プリント・画像・動画の文字起こしなど）から、重複や無駄な情報（ページ番号、繰り返し、無関係な広告的文言等）を除いて要点を整理し、その内容に基づいた授業設計を行ってください。
+出力は必ず、次のキーを持つJSONオブジェクトのみを返してください（説明文・コードフェンス・前置きは一切不要）：
+{"unit":"単元名","objectives":["目標1","目標2"],"flow":{"intro":"導入（5分程度の内容）","development":"展開（メインの学習活動）","summary":"まとめ"},"evaluation":"評価の観点","board":"板書計画の概要","slides":[{"title":"スライドタイトル","bullets":["要点1","要点2"],"notes":"このスライドを話すときのナレーション原稿（60〜120字程度）"}],"infographic":{"title":"インフォグラフィックの題名","stats":[{"label":"項目名","value":"値や短い説明"}],"sections":[{"heading":"見出し","points":["ポイント1","ポイント2"]}]}}
+スライドは6〜10枚程度、無駄なく授業の流れに沿って構成してください。`;}
+
+$('#aiGenBtn').onclick=async()=>{
+if(!aiSources.length){toast('資料を1つ以上追加してください');return;}
+if(!DB.ai.key||!DB.ai.consent){toast('設定画面でAPIキー登録と同意が必要です');go('settings');return;}
+const grade=$('#aiGrade').value,subject=$('#aiSubject').value.trim(),unit=$('#aiUnit').value.trim(),time=$('#aiTime').value;
+const want={plan:$('#aiOutPlan').checked,slide:$('#aiOutSlide').checked,info:$('#aiOutInfo').checked,video:$('#aiOutVideo').checked};
+const instr=`対象学年：${grade||'指定なし'}／教科：${subject||'資料から推定'}／単元テーマ：${unit||'資料から推定してください'}／授業時間：${time}分\n必要な出力：${Object.entries(want).filter(x=>x[1]).map(x=>({plan:'授業案',slide:'スライド',info:'インフォグラフィック',video:'動画ナレーション'}[x[0]])).join('、')}`;
+const content=[{kind:'text',text:instr},...aiSources.map(s=>s.block)];
+$('#aiGenBtn').disabled=true;$('#aiGenStatus').innerHTML='<span class="text-slate-500">🤖 AIが資料を読み込んで生成中…（資料の量により数十秒かかります）</span>';
+try{
+const raw=await callAI(content,{maxTokens:8000,system:aiSystemPrompt()});
+const cleaned=raw.replace(/^```json\s*|```\s*$/g,'').trim();
+let json;try{json=JSON.parse(cleaned);}catch(e){throw new Error('AIの応答をJSONとして解析できませんでした。もう一度お試しください。');}
+aiLastResult={json,want};
+renderAiResults();
+$('#aiGenStatus').innerHTML='<span class="text-emerald-600">✅ 生成が完了しました</span>';
+}catch(e){$('#aiGenStatus').innerHTML='<span class="text-rose-600">⚠ '+esc(e.message)+'</span>';}
+finally{$('#aiGenBtn').disabled=false;}};
+
+function renderAiResults(){
+if(!aiLastResult){$('#aiResults').innerHTML='';return;}
+const {json,want}=aiLastResult;
+let h='';
+if(want.plan){
+h+=`<div class="card"><h3 class="font-bold mb-1">📋 授業案：${esc(json.unit||'')}</h3>
+<p class="text-xs"><b>目標</b><br>${(json.objectives||[]).map(o=>'・'+esc(o)).join('<br>')}</p>
+<p class="text-xs mt-1"><b>導入</b><br>${esc(json.flow?.intro||'')}</p>
+<p class="text-xs mt-1"><b>展開</b><br>${esc(json.flow?.development||'')}</p>
+<p class="text-xs mt-1"><b>まとめ</b><br>${esc(json.flow?.summary||'')}</p>
+<p class="text-xs mt-1"><b>評価の観点</b><br>${esc(json.evaluation||'')}</p>
+<p class="text-xs mt-1"><b>板書計画</b><br>${esc(json.board||'')}</p>
+<div class="mt-2"><button id="aiPlanSave" class="btn">保存</button><button id="aiPlanPrint" class="btn">印刷/PDF</button></div></div>`;
+}
+if(want.slide){
+h+=`<div class="card"><h3 class="font-bold mb-1">🖥️ スライド（${(json.slides||[]).length}枚）</h3>
+<div class="grid sm:grid-cols-2 gap-2 text-xs">${(json.slides||[]).map((s,i)=>`<div class="border rounded p-2"><b>${i+1}. ${esc(s.title||'')}</b><ul class="list-disc pl-4">${(s.bullets||[]).map(b=>'<li>'+esc(b)+'</li>').join('')}</ul></div>`).join('')}</div>
+<button id="aiSlidePptx" class="btn btn-p mt-2">📥 PPTXダウンロード</button></div>`;
+}
+if(want.info){
+h+=`<div class="card"><h3 class="font-bold mb-1">📊 インフォグラフィック</h3>
+<div id="aiInfoCard" class="rounded-xl p-4" style="background:linear-gradient(135deg,#fdf4ff,#eef2ff);border:1px solid #e9d5ff">
+<h2 class="text-base font-bold text-purple-800">${esc(json.infographic?.title||json.unit||'')}</h2>
+<div class="grid grid-cols-2 sm:grid-cols-3 gap-2 my-2">${(json.infographic?.stats||[]).map(s=>`<div class="bg-white rounded-lg p-2 text-center shadow-sm"><div class="text-lg font-bold text-purple-700">${esc(s.value||'')}</div><div class="text-[10px] text-slate-500">${esc(s.label||'')}</div></div>`).join('')}</div>
+${(json.infographic?.sections||[]).map(sec=>`<div class="mb-2"><div class="text-xs font-bold text-purple-700">${esc(sec.heading||'')}</div><ul class="text-xs list-disc pl-4">${(sec.points||[]).map(p=>'<li>'+esc(p)+'</li>').join('')}</ul></div>`).join('')}
+</div>
+<button id="aiInfoPng" class="btn btn-p mt-2">🖼️ PNGとして保存</button></div>`;
+}
+if(want.video){
+h+=`<div class="card"><h3 class="font-bold mb-1">🎬 簡易動画（スライドショー＋音声ナレーション）</h3>
+<p class="text-xs text-slate-500 mb-1">再生ボタンでブラウザの音声合成を使い、スライドを自動送りしながら読み上げます。録画ボタンで動画ファイル（音声つき）として保存を試みます（ブラウザに「このタブを共有」の許可が必要です。対応していない場合は音声なしの動画になります）。</p>
+<div id="aiVideoStage" class="border rounded-lg p-4 text-center min-h-[140px] flex flex-col items-center justify-center bg-slate-50"><div class="text-sm text-slate-400">▶再生を押すとここにスライドが表示されます</div></div>
+<div class="mt-2 flex gap-2"><button id="aiVideoPlay" class="btn btn-p">▶ 再生（ナレーション付き）</button><button id="aiVideoRec" class="btn">⏺ 動画として録画・保存</button><span id="aiVideoStatus" class="text-xs self-center"></span></div></div>`;
+}
+$('#aiResults').innerHTML=h;
+if(want.plan){
+$('#aiPlanSave').onclick=()=>{const html=$('#aiResults').querySelector('.card').innerHTML.replace(/<div class="mt-2">.*<\/div>$/s,'');DB.materials.push({id:uid(),date:todayStr(),title:json.unit||'AI生成授業案',content:cleanHtml(html)});save();toast('保存しました');renderMaterial();};
+$('#aiPlanPrint').onclick=()=>{const html=$('#aiResults').querySelector('.card').innerHTML.replace(/<div class="mt-2">.*<\/div>$/s,'');printDoc(json.unit||'授業案',html);};
+}
+if(want.slide)$('#aiSlidePptx').onclick=()=>exportPptx(json);
+if(want.info)$('#aiInfoPng').onclick=()=>exportInfoPng();
+if(want.video){$('#aiVideoPlay').onclick=()=>playAiVideo(json.slides||[],false);$('#aiVideoRec').onclick=()=>playAiVideo(json.slides||[],true);}
+}
+
+function exportPptx(json){
+if(!window.PptxGenJS){toast('PPTX作成ライブラリが読み込めませんでした（ネット接続をご確認ください）');return;}
+const p=new PptxGenJS();
+(json.slides||[]).forEach(s=>{const sl=p.addSlide();sl.addText(s.title||'',{x:0.4,y:0.3,w:9,h:0.8,fontSize:24,bold:true,color:'6b21a8'});
+sl.addText((s.bullets||[]).map(b=>({text:b,options:{bullet:true,breakLine:true}})),{x:0.6,y:1.2,w:8.8,h:4,fontSize:16,color:'333333'});
+if(s.notes)sl.addNotes(s.notes);});
+p.writeFile({fileName:(json.unit||'slides')+'.pptx'});toast('PPTXを保存しました');}
+
+async function exportInfoPng(){
+if(!window.html2canvas){toast('画像化ライブラリが読み込めませんでした（ネット接続をご確認ください）');return;}
+const el=$('#aiInfoCard');const canvas=await html2canvas(el,{backgroundColor:'#ffffff',scale:2});
+const a=document.createElement('a');a.href=canvas.toDataURL('image/png');a.download='infographic.png';a.click();toast('PNGを保存しました');}
+
+async function playAiVideo(slides,record){
+if(!slides.length){toast('スライドがありません');return;}
+const stage=$('#aiVideoStage'),status=$('#aiVideoStatus');
+const canvas=document.createElement('canvas');canvas.width=960;canvas.height=540;const ctx=canvas.getContext('2d');
+let recorder=null,chunks=[],mixedStream=null;
+if(record){
+if(!('MediaRecorder'in window)){toast('このブラウザは録画に対応していません');return;}
+try{
+const canvasStream=canvas.captureStream(30);
+let audioTrack=null;
+try{const disp=await navigator.mediaDevices.getDisplayMedia({video:true,audio:true,preferCurrentTab:true});audioTrack=disp.getAudioTracks()[0];disp.getVideoTracks().forEach(t=>t.stop());}catch(e){toast('音声取得の許可がなかったため、映像のみ録画します（画面共有ダイアログで「このタブ」と音声共有を選ぶと音声が入ります）');}
+mixedStream=new MediaStream([...canvasStream.getVideoTracks(),...(audioTrack?[audioTrack]:[])]);
+recorder=new MediaRecorder(mixedStream,{mimeType:'video/webm'});
+recorder.ondataavailable=e=>{if(e.data.size)chunks.push(e.data);};
+recorder.onstop=()=>{const blob=new Blob(chunks,{type:'video/webm'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='lesson_video.webm';a.click();toast('動画を保存しました（.webm）');(mixedStream.getTracks()||[]).forEach(t=>t.stop());};
+recorder.start();
+}catch(e){toast('録画の開始に失敗しました：'+e.message);return;}
+}
+function drawSlide(s,i,total){ctx.fillStyle='#faf5ff';ctx.fillRect(0,0,960,540);ctx.fillStyle='#6b21a8';ctx.font='bold 34px sans-serif';ctx.fillText(s.title||'',40,70);
+ctx.fillStyle='#333';ctx.font='20px sans-serif';(s.bullets||[]).forEach((b,bi)=>{ctx.fillText('・'+b,60,140+bi*40);});
+ctx.fillStyle='#999';ctx.font='14px sans-serif';ctx.fillText(`${i+1} / ${total}`,880,520);
+stage.innerHTML='';stage.appendChild(Object.assign(canvas.cloneNode(),{}));const disp=document.createElement('canvas');disp.width=480;disp.height=270;disp.getContext('2d').drawImage(canvas,0,0,480,270);stage.innerHTML='';stage.appendChild(disp);}
+function speak(text){return new Promise(res=>{if(!('speechSynthesis'in window)||!text){setTimeout(res,1500);return;}
+const u=new SpeechSynthesisUtterance(text);u.lang='ja-JP';u.onend=res;u.onerror=res;speechSynthesis.speak(u);});}
+(async()=>{for(let i=0;i<slides.length;i++){status.textContent=`再生中… (${i+1}/${slides.length})`;drawSlide(slides[i],i,slides.length);await speak(slides[i].notes||slides[i].bullets?.join('。')||'');}
+status.textContent='完了';if(recorder&&recorder.state==='recording')recorder.stop();})();}
+
 $('#bakBtn').onclick=()=>{download(JSON.stringify(DB,null,2),'kyomu_backup_'+todayStr()+'.json');DB.meta.lastBackup=todayStr();save();toast('バックアップを保存しました');};
 $('#restoreFile').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();
 r.onload=()=>{try{const j=JSON.parse(r.result);if(j.enc){toast('暗号化ファイルです。暗号化復元を使用してください。');return;}
@@ -1127,17 +1349,19 @@ return h;}
 $('#handoverBtn').onclick=()=>{if(!DB.students.length){toast('データがありません');return;}printDoc('引き継ぎパック '+DB.settings.year,handoverHtml());};
 $('#handoverJson').onclick=()=>{if(!DB.students.length){toast('データがありません');return;}download(JSON.stringify(DB,null,2),`kyomu_handover_${todayStr()}.json`);toast('引き継ぎJSONを保存しました（後任機で復元可能）');};
 function renderSettings(){const bytes=((localStorage.getItem(LS))||'').length*2;const kb=Math.round(bytes/1024);
-const pct=Math.min(100,kb/5120*100);
-$('#storageMeter').innerHTML=`<div class="text-xs">💽 データ使用量：約${kb} KB（目安 5MB中）</div><div class="bar mt-1" style="width:${Math.max(2,pct)}%"></div>`;}
-$('#selfTestBtn').onclick=()=>{const R={dashboard:renderDashboard,material:renderMaterial,observe:renderObserve,report:renderReportSaves,guidance:renderGuidance,grades:renderGrades,iep:renderIep,timetable:renderTimetable,contact:renderContact,submit:renderSubmit,letter:renderLetter,students:renderStudents,attendance:renderAttendance,duties:renderDuties,journal:renderJournal,event:renderEvent,interview:renderInterview,health:renderHealth,portfolio:renderPortfolio,growth:renderGrowth,design:renderDesign,analysis:renderAnalysis,settings:renderSettings};
+const pct=Math.min(100,kb/5120*100);const warn=pct>=80;
+$('#storageMeter').innerHTML=`<div class="text-xs">💽 データ使用量：約${kb} KB（目安 5MB中）${warn?'<span class="chip chip-warn ml-1">残りわずか</span>':''}</div><div class="bar mt-1" style="width:${Math.max(2,pct)}%${warn?';background:linear-gradient(90deg,#f0507a,#e0507a)':''}"></div>`;
+renderAiSettings();}
+$('#selfTestBtn').onclick=()=>{const R={dashboard:renderDashboard,material:renderMaterial,aigen:renderAigen,observe:renderObserve,report:renderReportSaves,guidance:renderGuidance,grades:renderGrades,iep:renderIep,timetable:renderTimetable,contact:renderContact,submit:renderSubmit,letter:renderLetter,students:renderStudents,attendance:renderAttendance,duties:renderDuties,journal:renderJournal,event:renderEvent,interview:renderInterview,health:renderHealth,portfolio:renderPortfolio,growth:renderGrowth,design:renderDesign,analysis:renderAnalysis,settings:renderSettings};
 const res=[];for(const k in R){try{R[k]();res.push([true,k]);}catch(e){res.push([false,k+'：'+(e.message||'')]);}}
 $('#secDiag').innerHTML='<div class="text-xs font-bold mb-1">🩺 セルフテスト結果</div>'+res.map(x=>`<div class="text-xs py-0.5">${x[0]?'✅':'⚠️'} ${esc(x[1])}</div>`).join('');
 toast(res.every(x=>x[0])?'セルフテスト：全画面正常':'セルフテスト：問題を検出');};
 function render(id){refreshStudentSelects();buildNav();
-const f=({dashboard:renderDashboard,material:renderMaterial,observe:renderObserve,report:renderReportSaves,guidance:renderGuidance,grades:renderGrades,iep:renderIep,timetable:renderTimetable,contact:renderContact,submit:renderSubmit,letter:renderLetter,students:renderStudents,attendance:renderAttendance,duties:renderDuties,journal:renderJournal,event:renderEvent,interview:renderInterview,health:renderHealth,portfolio:renderPortfolio,growth:renderGrowth,design:renderDesign,analysis:renderAnalysis,settings:renderSettings})[id];
+const f=({dashboard:renderDashboard,material:renderMaterial,aigen:renderAigen,observe:renderObserve,report:renderReportSaves,guidance:renderGuidance,grades:renderGrades,iep:renderIep,timetable:renderTimetable,contact:renderContact,submit:renderSubmit,letter:renderLetter,students:renderStudents,attendance:renderAttendance,duties:renderDuties,journal:renderJournal,event:renderEvent,interview:renderInterview,health:renderHealth,portfolio:renderPortfolio,growth:renderGrowth,design:renderDesign,analysis:renderAnalysis,settings:renderSettings})[id];
 try{f&&f();}catch(e){toast('⚠ 表示エラー：'+(e.message||'不明'));}}
 function init(){['oDate','hDate','jDate','tDate','iDate','eDate','sDue','aDate','lDate','ivDate'].forEach(id=>{const el=$('#'+id);if(el)el.value=todayStr();});
 $('#aMonth').value=todayStr().slice(0,7);
+if(DB.meta.filter){filter={grade:DB.meta.filter.grade||'',klass:DB.meta.filter.klass||''};$('#fGrade').value=filter.grade;$('#fClass').value=filter.klass;}
 $('#setSchoolType').value=DB.settings.schoolType;$('#setSchool').value=DB.settings.school;$('#setTeacher').value=DB.settings.teacher;$('#setGrade').value=DB.settings.grade;$('#setClass').value=DB.settings.klass;$('#setYear').value=DB.settings.year;
 $('#secAuto').value=String(DB.security.autoLock||0);
 $('#gYear').value=DB.settings.year||'2026';
